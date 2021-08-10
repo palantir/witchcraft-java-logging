@@ -1,0 +1,6 @@
+type: feature
+feature:
+  description: Implement gradle-witchcraft-logging plugins to recommend the IDE plugin
+    and format test reports
+  links:
+  - https://github.com/palantir/witchcraft-java-logging/pull/2
