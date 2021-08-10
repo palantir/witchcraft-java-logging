@@ -1,0 +1,18 @@
+apply plugin: 'com.palantir.external-publish-jar'
+apply plugin: 'groovy'
+
+dependencies {
+    api gradleApi()
+    implementation project(':witchcraft-logging-formatting')
+    implementation 'com.google.guava:guava'
+
+    testImplementation gradleTestKit()
+    testImplementation 'com.google.guava:guava'
+    testImplementation 'com.netflix.nebula:nebula-test'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+}
