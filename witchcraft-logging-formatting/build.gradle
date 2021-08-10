@@ -1,0 +1,16 @@
+apply plugin: 'com.palantir.external-publish-jar'
+
+dependencies {
+    api 'com.palantir.witchcraft.api:witchcraft-logging-api-objects'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+    implementation 'com.google.guava:guava'
+    implementation 'org.slf4j:slf4j-api'
+
+    annotationProcessor 'org.immutables:value'
+    compileOnly 'org.immutables:value-annotations'
+
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core'
+}

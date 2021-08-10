@@ -1,0 +1,7 @@
+com.palantir.witchcraft.api:* = 1.6.0
+com.google.guava:guava = 30.1.1-jre
+org.immutables:* = 2.8.8
+org.assertj:assertj-core = 3.20.2
+org.junit.jupiter:* = 5.7.2
+org.mockito:* = 3.11.2
+org.slf4j:* = 1.7.32
