@@ -39,7 +39,8 @@ public final class WitchcraftLogFormatFilterTest {
             + "\"time\":\"2019-05-09T15:32:37.692Z\",\"origin\":\"ROOT\","
             + "\"thread\":\"main\",\"message\":\"test good {}\","
             + "\"params\":{\"good\":\":-)\"},\"unsafeParams\":{},\"tags\":{}}";
-    private static final String SERVICE_FORMATTED = "ERROR [2019-05-09T15:32:37.692Z] ROOT: test good {} (good: :-))";
+    private static final String SERVICE_FORMATTED =
+            "ERROR [2019-05-09T15:32:37.692Z] [main] ROOT: test good {} (good: :-))";
 
     private static final String REQUEST_JSON = "{\"type\":\"request.2\",\"time\":\"2019-05-24T12:40:36.703-04:00\","
             + "\"method\":\"GET\",\"protocol\":\"HTTP/1.1\",\"path\":\"/api/sleep/{millis}\","
@@ -107,7 +108,7 @@ public final class WitchcraftLogFormatFilterTest {
                         + "\"time\":\"2019-05-09T15:32:37.692Z\",\"origin\":\"ROOT\","
                         + "\"thread\":\"main\",\"message\":\"Hello, {}!\","
                         + "\"params\":{},\"unsafeParams\":{\"0\": \"World\"},\"tags\":{}}"))
-                .isEqualTo("ERROR [2019-05-09T15:32:37.692Z] ROOT: Hello, World! (0: World)");
+                .isEqualTo("ERROR [2019-05-09T15:32:37.692Z] [main] ROOT: Hello, World!");
     }
 
     @Test

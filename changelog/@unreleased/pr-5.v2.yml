@@ -1,0 +1,15 @@
+type: improvement
+improvement:
+  description: |-
+    Service log formatting quality of life improvements.
+    * Parameters which are interpolated into the formatted output are
+    no longer included in the trailing key/value parameter pairs, for
+    more concise output.
+    * Parameters are automatically interpolated into the stackTrace
+    field, unsafe throwable messages are easier to follow in a
+    development environment.
+    * Service log lines include the thread name on which events were
+    created, previously this data was not included in the formatted
+    output.
+  links:
+  - https://github.com/palantir/witchcraft-java-logging/pull/5

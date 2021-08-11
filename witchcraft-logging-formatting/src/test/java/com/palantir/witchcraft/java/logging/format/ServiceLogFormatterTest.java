@@ -38,9 +38,8 @@ class ServiceLogFormatterTest {
                 .build());
 
         assertThat(formatted)
-                .isEqualTo(
-                        "INFO  [2019-12-25T01:02:03Z] com.origin: message {} (param1: value1, unsafeParam2: value2)\n"
-                                + "java.lang.Exception: stacktrace");
+                .isEqualTo("INFO  [2019-12-25T01:02:03Z] [thread-1] com.origin: message {} (param1: value1, "
+                        + "unsafeParam2: value2)\njava.lang.Exception: stacktrace");
     }
 
     @Test
@@ -54,7 +53,24 @@ class ServiceLogFormatterTest {
                 .unsafeParams("0", "inlined")
                 .build());
 
+        assertThat(formatted).isEqualTo("ERROR [2019-12-25T01:02:03Z] <nil>: message inlined (param: value)");
+    }
+
+    @Test
+    void interpolates_stack_trace_parameters() {
+        String formatted = ServiceLogFormatter.format(ServiceLogV1.builder()
+                .type("service.1")
+                .level(LogLevel.INFO)
+                .time(TestData.XMAS_2019)
+                .message("message")
+                .origin("com.origin")
+                .thread("thread-1")
+                .unsafeParams("throwable0_message", "exception message")
+                .stacktrace("java.lang.Exception: {throwable0_message}")
+                .build());
+
         assertThat(formatted)
-                .isEqualTo("ERROR [2019-12-25T01:02:03Z] <nil>: message inlined (param: value, 0: inlined)");
+                .isEqualTo("INFO  [2019-12-25T01:02:03Z] [thread-1] com.origin: message\n"
+                        + "java.lang.Exception: exception message");
     }
 }
