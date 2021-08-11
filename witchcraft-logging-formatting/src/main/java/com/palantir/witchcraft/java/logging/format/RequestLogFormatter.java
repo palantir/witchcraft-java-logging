@@ -25,6 +25,11 @@ final class RequestLogFormatter {
     private RequestLogFormatter() {}
 
     private static final Pattern REQUEST_PARAMETER_PATTERN = Pattern.compile("\\{(\\S+?)}");
+    // Common implementations often store the raw unsafe path in 'unsafeParams.path'.
+    // We can use that path when present for a better debugging expereience, especially
+    // in cases tests fail due to unmatched paths where we'd otherwise see '/*'
+    // or '(unmatched path)'
+    private static final String UNSAFE_PATH_PARAMETER = "path";
 
     static String format(RequestLogV2 request) {
         return Formatting.withStringBuilder(buffer -> {
@@ -45,6 +50,14 @@ final class RequestLogFormatter {
     }
 
     private static String getPathWithParameters(RequestLogV2 request) {
+        Object maybeUnsafePath = request.getUnsafeParams().get(UNSAFE_PATH_PARAMETER);
+        if (maybeUnsafePath instanceof String) {
+            String unsafePath = (String) maybeUnsafePath;
+            // Validate that this is a reasonable path value based on a leading slash.
+            if (unsafePath.startsWith("/")) {
+                return unsafePath;
+            }
+        }
         String path = request.getPath();
         Matcher matcher = REQUEST_PARAMETER_PATTERN.matcher(path);
         while (matcher.find()) {

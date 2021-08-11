@@ -40,4 +40,40 @@ class RequestLogFormatterTest {
 
         assertThat(formatted).isEqualTo("[2019-12-25T01:02:03Z] \"GET /some/path/value http\" 203 40 99");
     }
+
+    @Test
+    void prefers_unsafe_path() {
+        String formatted = RequestLogFormatter.format(RequestLogV2.builder()
+                .type("request.1")
+                .time(TestData.XMAS_2019)
+                .protocol("http")
+                .path("/some/path/{unknown}")
+                .status(203)
+                .requestSize(SafeLong.of(20))
+                .responseSize(SafeLong.of(40))
+                .duration(SafeLong.of(99))
+                .method("GET")
+                .unsafeParams("path", "/some/path/value")
+                .build());
+
+        assertThat(formatted).isEqualTo("[2019-12-25T01:02:03Z] \"GET /some/path/value http\" 203 40 99");
+    }
+
+    @Test
+    void ignores_bogus_unsafe_path() {
+        String formatted = RequestLogFormatter.format(RequestLogV2.builder()
+                .type("request.1")
+                .time(TestData.XMAS_2019)
+                .protocol("http")
+                .path("/some/path/{unknown}")
+                .status(203)
+                .requestSize(SafeLong.of(20))
+                .responseSize(SafeLong.of(40))
+                .duration(SafeLong.of(99))
+                .method("GET")
+                .unsafeParams("path", ":witchcraft-logging-formatting")
+                .build());
+
+        assertThat(formatted).isEqualTo("[2019-12-25T01:02:03Z] \"GET /some/path/{unknown} http\" 203 40 99");
+    }
 }
