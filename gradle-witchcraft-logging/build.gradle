@@ -1,5 +1,7 @@
-apply plugin: 'com.palantir.external-publish-jar'
 apply plugin: 'groovy'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'com.gradle.plugin-publish'
+apply plugin: 'com.palantir.external-publish-jar'
 
 dependencies {
     api gradleApi()
@@ -16,3 +18,44 @@ dependencies {
 
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
+
+gradlePlugin {
+    plugins {
+        witchcraftLoggingPlugin {
+            id = 'com.palantir.witchcraft-logging'
+            implementationClass = 'com.palantir.witchcraft.java.logging.gradle.WitchcraftLoggingPlugin'
+        }
+        witchcraftLoggingIdeaPlugin {
+            id = 'com.palantir.witchcraft-logging-idea'
+            implementationClass = 'com.palantir.witchcraft.java.logging.gradle.idea.IdeaPluginRecommenderPlugin'
+        }
+        witchcraftLoggingTestReportPlugin {
+            id = 'com.palantir.witchcraft-logging-testreport'
+            implementationClass = 'com.palantir.witchcraft.java.logging.gradle.testreport.TestReportFormattingPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/palantir/witchcraft-java-logging'
+    vcsUrl = 'https://github.com/palantir/witchcraft-java-logging'
+    description = 'Palantir Witchcraft logging plugins used to improve developer experience building, running, and debugging applications using the witchcraft logging api: https://github.com/palantir/witchcraft-api.'
+    tags = ['witchcraft', 'logging', 'idea']
+
+    plugins {
+        witchcraftLoggingPlugin {
+            displayName = 'Palantir Witchcraft Logging Plugin'
+        }
+        witchcraftLoggingIdeaPlugin {
+            displayName = 'Palantir Witchcraft Logging Idea Plugin'
+        }
+        witchcraftLoggingTestReportPlugin {
+            displayName = 'Palantir Witchcraft Logging Test Report Rendering Plugin'
+        }
+    }
+}
+
+tasks.publish.dependsOn tasks.publishPlugins
+publishPlugins.onlyIf { versionDetails().isCleanTag }
+project.ext.'gradle.publish.key' = System.env["GRADLE_KEY"]
+project.ext.'gradle.publish.secret' = System.env["GRADLE_SECRET"]
