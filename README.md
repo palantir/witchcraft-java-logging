@@ -17,5 +17,5 @@ This repository provides an intellij plugin to parse and render witchcraft-api s
 
 ## Formatting Library
 
-The `witchcraft-logging-formatting` library is used by the Intellij Plugin to parse and format structured logging, and menat
+The `witchcraft-logging-formatting` library is used by the Intellij Plugin to parse and format structured logging, and meant
 to be reused anywhere that needs to format structured output.
