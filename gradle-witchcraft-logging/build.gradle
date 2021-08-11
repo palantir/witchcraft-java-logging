@@ -1,7 +1,6 @@
 apply plugin: 'groovy'
-apply plugin: 'java-gradle-plugin'
-apply plugin: 'com.gradle.plugin-publish'
 apply plugin: 'com.palantir.external-publish-jar'
+apply plugin: 'com.palantir.external-publish-gradle-plugin'
 
 dependencies {
     api gradleApi()
@@ -54,8 +53,3 @@ pluginBundle {
         }
     }
 }
-
-tasks.publish.dependsOn tasks.publishPlugins
-publishPlugins.onlyIf { versionDetails().isCleanTag }
-project.ext.'gradle.publish.key' = System.env["GRADLE_KEY"]
-project.ext.'gradle.publish.secret' = System.env["GRADLE_SECRET"]
