@@ -90,7 +90,7 @@ class TestReportFormattingPluginIntegrationSpec extends IntegrationSpec {
         def htmlReport = file('build/reports/tests/test/classes/com.palantir.SimpleTest.html').text
         htmlReport.contains('==Service==')
         !htmlReport.contains('service.1')
-        htmlReport.contains('ERROR [2019-05-09T15:32:37.692Z] ROOT: test good {} (good: :-))')
+        htmlReport.contains('ERROR [2019-05-09T15:32:37.692Z] [main] ROOT: test good {} (good: :-))')
         htmlReport.contains('==Request==')
         !htmlReport.contains('request.2')
         htmlReport.contains('GET /api/sleep/10')
