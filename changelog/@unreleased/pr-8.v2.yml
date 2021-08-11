@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Reduce minimum intellij supported version to 2020.3
+  links:
+  - https://github.com/palantir/witchcraft-java-logging/pull/8
