@@ -1,4 +1,5 @@
 rootProject.name = 'witchcraft-java-logging-root'
 
+include 'gradle-witchcraft-logging'
 include 'witchcraft-logging-formatting'
 include 'witchcraft-logging-idea'
