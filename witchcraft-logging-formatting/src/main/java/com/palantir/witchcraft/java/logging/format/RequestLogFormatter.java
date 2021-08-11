@@ -26,7 +26,7 @@ final class RequestLogFormatter {
 
     private static final Pattern REQUEST_PARAMETER_PATTERN = Pattern.compile("\\{(\\S+?)}");
     // Common implementations often store the raw unsafe path in 'unsafeParams.path'.
-    // We can use that path when present for a better debugging expereience, especially
+    // We can use that path when present for a better debugging experience, especially
     // in cases tests fail due to unmatched paths where we'd otherwise see '/*'
     // or '(unmatched path)'
     private static final String UNSAFE_PATH_PARAMETER = "path";
