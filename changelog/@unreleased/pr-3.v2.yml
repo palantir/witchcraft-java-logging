@@ -1,0 +1,7 @@
+type: improvement
+improvement:
+  description: '`request.2` log formatting uses `unsafeParams.path` when available.
+    This allows us to debug tests more easily when clients are misconfigured, for
+    example with an incorrect context-path.'
+  links:
+  - https://github.com/palantir/witchcraft-java-logging/pull/3
