@@ -19,3 +19,10 @@ This repository provides an intellij plugin to parse and render witchcraft-api s
 
 The `witchcraft-logging-formatting` library is used by the Intellij Plugin to parse and format structured logging, and menat
 to be reused anywhere that needs to format structured output.
+
+## Gradle Plugin
+
+The `com.palantir.witchcraft-logging` gradle plugin applies all standard witchcraft-logging functionality, however the following plugins may be applied individually if needed:
+
+* `com.palantir.witchcraft-logging-idea` Updates Intellij configurations so developers are prompted to install the [Intellij Plugin](#intellij-plugin).
+* `com.palantir.witchcraft-logging-testreport` Filters and formats unit test report stdout and stderr for human-readable logging.
