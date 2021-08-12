@@ -112,6 +112,15 @@ public final class WitchcraftLogFormatFilterTest {
     }
 
     @Test
+    public void formatServiceLineWithNullField() {
+        assertThat(runFilter("{\"type\":\"service.1\",\"level\":\"ERROR\","
+                        + "\"time\":\"2019-05-09T15:32:37.692Z\",\"origin\":\"ROOT\","
+                        + "\"thread\":\"main\",\"message\":\"Hello, World!\","
+                        + "\"params\":{\"a\":null},\"unsafeParams\":{\"b\":null},\"tags\":{}}"))
+                .isEqualTo("ERROR [2019-05-09T15:32:37.692Z] [main] ROOT: Hello, World! (a: null, b: null)");
+    }
+
+    @Test
     public void formatServiceLine_slf4jInterpolation() {
         assertThat(runFilter("{\"type\":\"service.1\",\"level\":\"ERROR\","
                         + "\"time\":\"2019-05-09T15:32:37.692Z\",\"origin\":\"ROOT\","
