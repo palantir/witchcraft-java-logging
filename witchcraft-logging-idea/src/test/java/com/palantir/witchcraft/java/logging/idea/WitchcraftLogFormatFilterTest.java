@@ -39,6 +39,10 @@ public final class WitchcraftLogFormatFilterTest {
             + "\"time\":\"2019-05-09T15:32:37.692Z\",\"origin\":\"ROOT\","
             + "\"thread\":\"main\",\"message\":\"test good {}\","
             + "\"params\":{\"good\":\":-)\"},\"unsafeParams\":{},\"tags\":{}}";
+    private static final String SERVICE_JSON_WITH_UNKNOWN_FIELD = "{\"type\":\"service.1\",\"level\":\"ERROR\","
+            + "\"time\":\"2019-05-09T15:32:37.692Z\",\"origin\":\"ROOT\","
+            + "\"thread\":\"main\",\"message\":\"test good {}\","
+            + "\"params\":{\"good\":\":-)\"},\"unsafeParams\":{},\"unknownField\":\"value\"}";
     private static final String SERVICE_FORMATTED =
             "ERROR [2019-05-09T15:32:37.692Z] [main] ROOT: test good {} (good: :-))";
 
@@ -100,6 +104,11 @@ public final class WitchcraftLogFormatFilterTest {
     @Test
     public void formatServiceLine() {
         assertThat(runFilter(SERVICE_JSON)).isEqualTo(SERVICE_FORMATTED);
+    }
+
+    @Test
+    public void formatServiceLineWithUnknownField() {
+        assertThat(runFilter(SERVICE_JSON_WITH_UNKNOWN_FIELD)).isEqualTo(SERVICE_FORMATTED);
     }
 
     @Test
