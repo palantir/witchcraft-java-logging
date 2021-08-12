@@ -1,0 +1,6 @@
+type: fix
+fix:
+  description: Fix parsing null parameter values
+  links:
+  - https://github.com/palantir/witchcraft-java-logging/pull/12
+  - https://github.com/palantir/witchcraft-api/pull/319
