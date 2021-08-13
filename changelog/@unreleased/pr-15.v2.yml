@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: Qualify class reference in WitchcraftLogSettingsPanel.form
+  links:
+  - https://github.com/palantir/witchcraft-java-logging/pull/15
