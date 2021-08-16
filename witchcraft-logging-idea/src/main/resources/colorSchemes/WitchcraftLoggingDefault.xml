@@ -1,0 +1,13 @@
+<?xml version='1.0'?>
+<list>
+    <option name="WITCHCRAFT_SERVICE_INFO">
+        <value>
+            <option name="FOREGROUND" value="404040"/>
+        </value>
+    </option>
+    <option name="WITCHCRAFT_SERVICE_WARN">
+        <value>
+            <option name="FOREGROUND" value="8a8a00"/>
+        </value>
+    </option>
+</list>

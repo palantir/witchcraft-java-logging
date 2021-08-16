@@ -12,5 +12,7 @@
                              displayName="Witchcraft Log Display"/>
         <projectService serviceInterface="com.palantir.witchcraft.java.logging.idea.WitchcraftLogSettingsManager"
                         serviceImplementation="com.palantir.witchcraft.java.logging.idea.WitchcraftLogSettingsManagerImpl"/>
+        <additionalTextAttributes scheme="Default" file="colorSchemes/WitchcraftLoggingDefault.xml"/>
+        <additionalTextAttributes scheme="Darcula" file="colorSchemes/WitchcraftLoggingDarcula.xml"/>
     </extensions>
 </idea-plugin>
