@@ -69,8 +69,8 @@ public final class WitchcraftLogFormatFilterTest {
             + "\"name\":\"config-reload\",\"timestamp\":1558716040949000,\"duration\":618,"
             + "\"annotations\":[{\"timestamp\":1558716040949000,\"value\":\"lc\","
             + "\"endpoint\":{\"serviceName\":\"my-service\",\"ipv4\":\"10.193.122.103\"}}]}}";
-    private static final String TRACE_FORMATTED = "[2019-05-24T16:40:40.950Z] traceId: 2250486695021e19 "
-            + "id: c11b9a31555b7035 name: config-reload duration: 618 microseconds";
+    private static final String TRACE_FORMATTED = "[2019-05-24T16:40:40.950Z] trace: 2250486695021e19, "
+            + "span: c11b9a31555b7035, name: config-reload, duration: 618 µs";
 
     private static final String NEWLINE = "\n";
 

@@ -16,8 +16,10 @@
 
 package com.palantir.witchcraft.java.logging.format;
 
+import com.palantir.witchcraft.api.logging.Span;
 import com.palantir.witchcraft.api.logging.TraceLogV1;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 final class TraceLogFormatter {
     private TraceLogFormatter() {}
@@ -26,15 +28,21 @@ final class TraceLogFormatter {
         return Formatting.withStringBuilder(buffer -> {
             buffer.append('[');
             DateTimeFormatter.ISO_INSTANT.formatTo(trace.getTime(), buffer);
-            buffer.append("] traceId: ")
-                    .append(trace.getSpan().getTraceId())
-                    .append(" id: ")
-                    .append(trace.getSpan().getId())
-                    .append(" name: ")
-                    .append(trace.getSpan().getName())
-                    .append(" duration: ")
-                    .append(trace.getSpan().getDuration().longValue())
-                    .append(" microseconds");
+            Span span = trace.getSpan();
+            buffer.append("] trace: ")
+                    .append(span.getTraceId())
+                    .append(", span: ")
+                    .append(span.getId())
+                    .append(", name: ")
+                    .append(span.getName())
+                    .append(", duration: ")
+                    .append(span.getDuration().longValue())
+                    .append(" µs");
+            Map<String, String> tags = span.getTags();
+            if (!tags.isEmpty()) {
+                buffer.append(' ');
+                Formatting.niceMap(tags, buffer);
+            }
         });
     }
 }
