@@ -18,6 +18,7 @@ package com.palantir.witchcraft.java.logging.format;
 
 import com.palantir.witchcraft.api.logging.TraceLogV1;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 final class TraceLogFormatter {
     private TraceLogFormatter() {}
@@ -35,6 +36,11 @@ final class TraceLogFormatter {
                     .append(" duration: ")
                     .append(trace.getSpan().getDuration().longValue())
                     .append(" microseconds");
+            Map<String, String> tags = trace.getSpan().getTags();
+            if (!tags.isEmpty()) {
+                buffer.append(' ');
+                Formatting.niceMap(tags, buffer);
+            }
         });
     }
 }
