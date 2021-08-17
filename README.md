@@ -13,7 +13,7 @@ Logging infrastructure for the Java language implementation of [witchcraft-api](
 
 This repository provides an intellij plugin to parse and render witchcraft-api structured logs from IDE console output.
 
-### Before Intellij Plugin
+### Before the Intellij Plugin
 ![Unformatted](static/unformatted.png)
 
 ### Using the Intellij Plugin
