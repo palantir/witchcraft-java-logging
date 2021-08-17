@@ -18,12 +18,20 @@ package com.palantir.witchcraft.java.logging.format;
 
 import com.palantir.witchcraft.api.logging.MetricLogV1;
 import java.time.format.DateTimeFormatter;
+import java.util.function.BiConsumer;
 
 final class MetricLogFormatter {
     private MetricLogFormatter() {}
 
     static String format(MetricLogV1 metric) {
-        return Formatting.withStringBuilder(buffer -> {
+        return Formatting.withStringBuilder(Handler.INSTANCE, metric);
+    }
+
+    private enum Handler implements BiConsumer<StringBuilder, MetricLogV1> {
+        INSTANCE;
+
+        @Override
+        public void accept(StringBuilder buffer, MetricLogV1 metric) {
             buffer.append('[');
             DateTimeFormatter.ISO_INSTANT.formatTo(metric.getTime(), buffer);
             buffer.append("] METRIC ")
@@ -42,6 +50,6 @@ final class MetricLogFormatter {
                 buffer.append(' ');
                 Formatting.niceMap(metric.getUnsafeParams(), buffer);
             }
-        });
+        }
     }
 }

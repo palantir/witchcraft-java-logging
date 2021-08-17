@@ -18,6 +18,7 @@ package com.palantir.witchcraft.java.logging.format;
 
 import com.google.common.base.CharMatcher;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /** Utility functionality shared between {@link LogFormatter} implementations. */
@@ -55,9 +56,13 @@ final class Formatting {
     }
 
     static String withStringBuilder(Consumer<StringBuilder> function) {
+        return withStringBuilder((stringBuilder, _unused) -> function.accept(stringBuilder), null);
+    }
+
+    static <T> String withStringBuilder(BiConsumer<StringBuilder, ? super T> function, T attachment) {
         StringBuilder builder = REUSABLE_STRING_BUILDER.get();
         builder.setLength(0);
-        function.accept(builder);
+        function.accept(builder, attachment);
         String result = builder.toString();
         if (builder.length() > 1024 * 16) {
             // Buffer has grown too large, allow the instance to be collected
