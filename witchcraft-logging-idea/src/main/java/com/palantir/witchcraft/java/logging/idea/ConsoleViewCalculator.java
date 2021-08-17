@@ -31,7 +31,7 @@ enum ConsoleViewCalculator implements LogVisitor<ConsoleViewContentType> {
     @Override
     public Optional<ConsoleViewContentType> serviceV1(ServiceLogV1 serviceLogV1) {
         return Optional.of(WitchcraftConsoleViewContentTypes.SERVICE_TYPES.getOrDefault(
-                serviceLogV1.getLevel(), WitchcraftConsoleViewContentTypes.DEFAULT_TYPE));
+                serviceLogV1.getLevel(), WitchcraftConsoleViewContentTypes.DEFAULT_SERVICE_TYPE));
     }
 
     @Override

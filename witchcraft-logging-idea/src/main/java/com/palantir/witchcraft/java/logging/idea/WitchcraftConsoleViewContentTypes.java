@@ -16,47 +16,44 @@
 
 package com.palantir.witchcraft.java.logging.idea;
 
-import com.google.common.collect.ImmutableMap;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.util.Pair;
 import com.palantir.witchcraft.api.logging.LogLevel;
-import java.awt.Color;
-import java.awt.Font;
+import java.util.Map;
 
 /** {@link ConsoleViewContentType} definitions used by this plugin. */
 final class WitchcraftConsoleViewContentTypes {
 
-    static final ConsoleViewContentType DEFAULT_TYPE =
+    static final ConsoleViewContentType DEFAULT_SERVICE_TYPE =
             createViewType("WITCHCRAFT_DEFAULT", ConsoleViewContentType.NORMAL_OUTPUT_KEY);
-    static final ImmutableMap<LogLevel, ConsoleViewContentType> SERVICE_TYPES =
-            ImmutableMap.<LogLevel, ConsoleViewContentType>builder()
-                    .put(LogLevel.FATAL, createViewType("WITCHCRAFT_SERVICE_FATAL", Color.RED))
-                    .put(LogLevel.ERROR, createViewType("WITCHCRAFT_SERVICE_ERROR", Color.RED))
-                    .put(LogLevel.WARN, createViewType("WITCHCRAFT_SERVICE_WARN", Color.YELLOW))
-                    .put(
-                            LogLevel.INFO,
-                            createViewType("WITCHCRAFT_SERVICE_INFO", ConsoleViewContentType.NORMAL_OUTPUT_KEY))
-                    .put(LogLevel.DEBUG, createViewType("WITCHCRAFT_SERVICE_DEBUG", Color.CYAN))
-                    .put(LogLevel.TRACE, createViewType("WITCHCRAFT_SERVICE_TRACE", Color.CYAN))
-                    .build();
-    static final ConsoleViewContentType EVENT_TYPE = createViewType("WITCHCRAFT_EVENT", Color.WHITE);
-    static final ConsoleViewContentType METRIC_TYPE = createViewType("WITCHCRAFT_METRIC", Color.DARK_GRAY);
-    static final ConsoleViewContentType REQUEST_TYPE = createViewType("WITCHCRAFT_REQUEST", Color.WHITE);
-    static final ConsoleViewContentType TRACE_TYPE = createViewType("WITCHCRAFT_TRACE", Color.WHITE);
+    static final Map<LogLevel, ConsoleViewContentType> SERVICE_TYPES = Map.of(
+            LogLevel.FATAL,
+            createViewType("WITCHCRAFT_SERVICE_FATAL", ConsoleViewContentType.ERROR_OUTPUT_KEY),
+            LogLevel.ERROR,
+            createViewType("WITCHCRAFT_SERVICE_ERROR", ConsoleViewContentType.ERROR_OUTPUT_KEY),
+            LogLevel.WARN,
+            createViewType("WITCHCRAFT_SERVICE_WARN", ConsoleViewContentType.LOG_WARNING_OUTPUT_KEY),
+            LogLevel.INFO,
+            createViewType("WITCHCRAFT_SERVICE_INFO", ConsoleViewContentType.LOG_INFO_OUTPUT_KEY),
+            LogLevel.DEBUG,
+            createViewType("WITCHCRAFT_SERVICE_DEBUG", ConsoleViewContentType.LOG_DEBUG_OUTPUT_KEY),
+            LogLevel.TRACE,
+            createViewType("WITCHCRAFT_SERVICE_TRACE", ConsoleViewContentType.LOG_VERBOSE_OUTPUT_KEY));
+    static final ConsoleViewContentType EVENT_TYPE =
+            createViewType("WITCHCRAFT_EVENT", ConsoleViewContentType.NORMAL_OUTPUT_KEY);
+    static final ConsoleViewContentType METRIC_TYPE =
+            createViewType("WITCHCRAFT_METRIC", ConsoleViewContentType.LOG_EXPIRED_ENTRY);
+    static final ConsoleViewContentType REQUEST_TYPE =
+            createViewType("WITCHCRAFT_REQUEST", ConsoleViewContentType.NORMAL_OUTPUT_KEY);
+    static final ConsoleViewContentType TRACE_TYPE =
+            createViewType("WITCHCRAFT_TRACE", ConsoleViewContentType.LOG_EXPIRED_ENTRY);
     // Marker content type for newlines applied by the formatter
-    static final ConsoleViewContentType NEWLINE_TYPE = createViewType("WITCHCRAFT_NEWLINE", Color.DARK_GRAY);
+    static final ConsoleViewContentType NEWLINE_TYPE =
+            createViewType("WITCHCRAFT_NEWLINE", ConsoleViewContentType.LOG_VERBOSE_OUTPUT_KEY);
     static final Pair<String, ConsoleViewContentType> NEWLINE = Pair.create("\n", NEWLINE_TYPE);
 
     private WitchcraftConsoleViewContentTypes() {}
-
-    private static ConsoleViewContentType createViewType(String name, Color color) {
-        return createViewType(
-                name,
-                TextAttributesKey.createTempTextAttributesKey(
-                        name, new TextAttributes(color, null, null, null, Font.PLAIN)));
-    }
 
     private static ConsoleViewContentType createViewType(String name, TextAttributesKey fallback) {
         return new ConsoleViewContentType(name, TextAttributesKey.createTextAttributesKey(name, fallback));
