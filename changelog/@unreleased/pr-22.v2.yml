@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Formatted trace logs include tracing tags
+  links:
+  - https://github.com/palantir/witchcraft-java-logging/pull/22
