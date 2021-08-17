@@ -40,8 +40,7 @@ class TraceLogFormatterTest {
                 .build());
 
         assertThat(formatted)
-                .isEqualTo(
-                        "[2019-12-25T01:02:03Z] traceId: abdefghijklmno id: id name: name duration: 31 microseconds");
+                .isEqualTo("[2019-12-25T01:02:03Z] trace: abdefghijklmno, span: id, name: name, duration: 31 µs");
     }
 
     @Test
@@ -60,7 +59,7 @@ class TraceLogFormatterTest {
                 .build());
 
         assertThat(formatted)
-                .isEqualTo("[2019-12-25T01:02:03Z] traceId: abdefghijklmno id: id name: "
-                        + "name duration: 31 microseconds (tagName: tagValue)");
+                .isEqualTo("[2019-12-25T01:02:03Z] trace: abdefghijklmno, span: id, "
+                        + "name: name, duration: 31 µs (tagName: tagValue)");
     }
 }

@@ -29,15 +29,15 @@ final class TraceLogFormatter {
             buffer.append('[');
             DateTimeFormatter.ISO_INSTANT.formatTo(trace.getTime(), buffer);
             Span span = trace.getSpan();
-            buffer.append("] traceId: ")
+            buffer.append("] trace: ")
                     .append(span.getTraceId())
-                    .append(" id: ")
+                    .append(", span: ")
                     .append(span.getId())
-                    .append(" name: ")
+                    .append(", name: ")
                     .append(span.getName())
-                    .append(" duration: ")
+                    .append(", duration: ")
                     .append(span.getDuration().longValue())
-                    .append(" microseconds");
+                    .append(" µs");
             Map<String, String> tags = span.getTags();
             if (!tags.isEmpty()) {
                 buffer.append(' ');
