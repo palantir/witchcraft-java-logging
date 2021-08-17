@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Upgrade the witchcraft-api logging definitions to the latest release
+  links:
+  - https://github.com/palantir/witchcraft-java-logging/pull/21
