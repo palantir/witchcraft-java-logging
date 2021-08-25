@@ -61,7 +61,7 @@ enum WitchcraftLogFormatter implements InputFilter, DumbAware {
 
             // If this is not the last piece, add a newline
             if (lineIterator.hasNext()) {
-                result.add(WitchcraftConsoleViewContentTypes.NEWLINE);
+                result.add(Pair.createNonNull("\n", contentType));
             }
         }
 

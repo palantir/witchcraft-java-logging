@@ -55,6 +55,8 @@ final class WitchcraftLogFilter implements InputFilter, DumbAware {
     @Override
     public List<Pair<String, ConsoleViewContentType>> applyFilter(
             @NotNull String text, @NotNull ConsoleViewContentType contentType) {
+        // Must check if the text is a newline and newlines must be skipped prior to delegation. The
+        // formatter skips non-witchcraft lines (newline text) so it's important to pre-validate.
         if (removeNextLineIfNewline) {
             removeNextLineIfNewline = false;
             if ("\n".equals(text)) {
