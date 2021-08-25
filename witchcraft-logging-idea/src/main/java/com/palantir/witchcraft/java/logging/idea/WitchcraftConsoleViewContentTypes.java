@@ -18,7 +18,6 @@ package com.palantir.witchcraft.java.logging.idea;
 
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.util.Pair;
 import com.palantir.witchcraft.api.logging.LogLevel;
 import java.util.Map;
 
@@ -48,10 +47,6 @@ final class WitchcraftConsoleViewContentTypes {
             createViewType("WITCHCRAFT_REQUEST", ConsoleViewContentType.NORMAL_OUTPUT_KEY);
     static final ConsoleViewContentType TRACE_TYPE =
             createViewType("WITCHCRAFT_TRACE", ConsoleViewContentType.LOG_EXPIRED_ENTRY);
-    // Marker content type for newlines applied by the formatter
-    static final ConsoleViewContentType NEWLINE_TYPE =
-            createViewType("WITCHCRAFT_NEWLINE", ConsoleViewContentType.LOG_VERBOSE_OUTPUT_KEY);
-    static final Pair<String, ConsoleViewContentType> NEWLINE = Pair.create("\n", NEWLINE_TYPE);
 
     private WitchcraftConsoleViewContentTypes() {}
 

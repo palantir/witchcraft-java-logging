@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Pair;
 import com.palantir.witchcraft.java.logging.format.LogFormatter;
 import com.palantir.witchcraft.java.logging.format.LogParser;
@@ -27,7 +28,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
-enum WitchcraftLogFormatter implements InputFilter {
+enum WitchcraftLogFormatter implements InputFilter, DumbAware {
     INSTANCE;
 
     private static final LogParser<Pair<String, ConsoleViewContentType>> LOG_PARSER =
@@ -60,7 +61,7 @@ enum WitchcraftLogFormatter implements InputFilter {
 
             // If this is not the last piece, add a newline
             if (lineIterator.hasNext()) {
-                result.add(WitchcraftConsoleViewContentTypes.NEWLINE);
+                result.add(Pair.createNonNull("\n", contentType));
             }
         }
 

@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Pair;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -27,10 +28,15 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-final class WitchcraftLogFilter implements InputFilter {
+final class WitchcraftLogFilter implements InputFilter, DumbAware {
 
     private final InputFilter delegate;
     private final ImmutableMap<ConsoleViewContentType, BooleanSupplier> displayFilter;
+
+    // When multiple lines are returned, the result may include a Pair representing a newline after a parsed
+    // Witchcraft line. If we filter an event, we must also filter the trailing newline character.
+    // An instance of each filter is created for every console, so this may be stateful.
+    private boolean removeNextLineIfNewline = false;
 
     WitchcraftLogFilter(InputFilter delegate, Supplier<WitchcraftLogSettings> settings) {
         this.delegate = delegate;
@@ -49,19 +55,24 @@ final class WitchcraftLogFilter implements InputFilter {
     @Override
     public List<Pair<String, ConsoleViewContentType>> applyFilter(
             @NotNull String text, @NotNull ConsoleViewContentType contentType) {
+        // Must check if the text is a newline and newlines must be skipped prior to delegation. The
+        // formatter skips non-witchcraft lines (newline text) so it's important to pre-validate.
+        if (removeNextLineIfNewline) {
+            removeNextLineIfNewline = false;
+            if ("\n".equals(text)) {
+                return ImmutableList.of();
+            }
+        }
         List<Pair<String, ConsoleViewContentType>> delegateResult = delegate.applyFilter(text, contentType);
         if (delegateResult == null || !containsWitchcraftData(delegateResult)) {
             return delegateResult;
         }
-        // When multiple lines are returned, the result may include a Pair representing a newline after a parsed
-        // Witchcraft line. If we filter an event, we must also filter the trailing newline character.
-        boolean removeNextLineIfNewline = false;
         ImmutableList.Builder<Pair<String, ConsoleViewContentType>> result =
                 ImmutableList.builderWithExpectedSize(delegateResult.size());
         for (Pair<String, ConsoleViewContentType> item : delegateResult) {
             if (removeNextLineIfNewline) {
                 removeNextLineIfNewline = false;
-                if (WitchcraftConsoleViewContentTypes.NEWLINE.equals(item)) {
+                if ("\n".equals(item.getFirst())) {
                     continue;
                 }
             }

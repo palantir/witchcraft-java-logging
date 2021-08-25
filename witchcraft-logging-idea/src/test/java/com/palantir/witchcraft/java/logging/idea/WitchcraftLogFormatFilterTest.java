@@ -84,7 +84,7 @@ public final class WitchcraftLogFormatFilterTest {
 
     @Test
     public void passesThroughNonWitchcraftLines() {
-        assertThat(runFilter("foo"))
+        assertThat(runFilterWithType(filter, "foo"))
                 .describedAs("unmatched lines should result in null, meaning no modification")
                 .isNull();
     }
@@ -96,7 +96,7 @@ public final class WitchcraftLogFormatFilterTest {
 
     @Test
     public void testEventContentType() {
-        assertThat(runFilterWithType(EVENT_JSON))
+        assertThat(runFilterWithType(filter, EVENT_JSON))
                 .extracting(pair -> pair.second)
                 .containsOnly(WitchcraftConsoleViewContentTypes.EVENT_TYPE);
     }
@@ -136,7 +136,7 @@ public final class WitchcraftLogFormatFilterTest {
 
     @Test
     public void requestLogContentType() {
-        assertThat(runFilterWithType(REQUEST_JSON))
+        assertThat(runFilterWithType(filter, REQUEST_JSON))
                 .extracting(pair -> pair.second)
                 .containsOnly(WitchcraftConsoleViewContentTypes.REQUEST_TYPE);
     }
@@ -216,22 +216,68 @@ public final class WitchcraftLogFormatFilterTest {
 
     @Test
     public void testMultiline() {
+        assertThat(runFilter(METRIC_JSON) + runFilter(NEWLINE) + runFilter(METRIC_JSON))
+                .isEqualTo(METRIC_FORMATTED + NEWLINE + METRIC_FORMATTED);
+    }
+
+    @Test
+    public void testMultipleLines() {
         assertThat(runFilter(METRIC_JSON + NEWLINE + METRIC_JSON))
                 .isEqualTo(METRIC_FORMATTED + NEWLINE + METRIC_FORMATTED);
     }
 
+    @Test
+    public void testMultilineFiltering() {
+        InputFilter inputFilter =
+                new WitchcraftLogFilter(WitchcraftLogFormatter.INSTANCE, () -> WitchcraftLogSettings.builder()
+                        .showEventLogs(true)
+                        .showMetricLogs(false)
+                        .showRequestLogs(true)
+                        .showTraceLogs(true)
+                        .build());
+        assertThat(runFilter(inputFilter, METRIC_JSON)
+                        + runFilter(inputFilter, NEWLINE)
+                        + runFilter(inputFilter, METRIC_JSON)
+                        + runFilter(inputFilter, NEWLINE)
+                        + runFilter(inputFilter, SERVICE_JSON))
+                .isEqualTo(SERVICE_FORMATTED);
+    }
+
+    @Test
+    public void testMultipleLinesFiltering() {
+        InputFilter inputFilter =
+                new WitchcraftLogFilter(WitchcraftLogFormatter.INSTANCE, () -> WitchcraftLogSettings.builder()
+                        .showEventLogs(true)
+                        .showMetricLogs(false)
+                        .showRequestLogs(true)
+                        .showTraceLogs(true)
+                        .build());
+        assertThat(runFilter(inputFilter, METRIC_JSON + NEWLINE + METRIC_JSON + NEWLINE + SERVICE_JSON))
+                .isEqualTo(SERVICE_FORMATTED);
+    }
+
     @Nullable
     private String runFilter(String input) {
-        List<Pair<String, ConsoleViewContentType>> pairs = runFilterWithType(input);
+        List<Pair<String, ConsoleViewContentType>> pairs = runFilterWithType(filter, input);
         if (pairs == null) {
-            return null;
+            return input;
         }
 
         return pairs.stream().map(pair -> pair.first).collect(Collectors.joining());
     }
 
     @Nullable
-    private List<Pair<String, ConsoleViewContentType>> runFilterWithType(String input) {
-        return filter.applyFilter(input, ConsoleViewContentType.NORMAL_OUTPUT);
+    private static String runFilter(InputFilter inputFilter, String input) {
+        List<Pair<String, ConsoleViewContentType>> pairs = runFilterWithType(inputFilter, input);
+        if (pairs == null) {
+            return input;
+        }
+
+        return pairs.stream().map(pair -> pair.first).collect(Collectors.joining());
+    }
+
+    @Nullable
+    private static List<Pair<String, ConsoleViewContentType>> runFilterWithType(InputFilter inputFilter, String input) {
+        return inputFilter.applyFilter(input, ConsoleViewContentType.NORMAL_OUTPUT);
     }
 }

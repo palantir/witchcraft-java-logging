@@ -18,11 +18,12 @@ package com.palantir.witchcraft.java.logging.idea;
 
 import com.intellij.execution.filters.ConsoleInputFilterProvider;
 import com.intellij.execution.filters.InputFilter;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 /** Intellij plugin implementation. */
-public final class WitchcraftLogFormatFilterProvider implements ConsoleInputFilterProvider {
+public final class WitchcraftLogFormatFilterProvider implements ConsoleInputFilterProvider, DumbAware {
     @NotNull
     @Override
     public InputFilter[] getDefaultFilters(@NotNull Project project) {
