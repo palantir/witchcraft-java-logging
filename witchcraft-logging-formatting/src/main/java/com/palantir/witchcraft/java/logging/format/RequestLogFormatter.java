@@ -18,6 +18,8 @@ package com.palantir.witchcraft.java.logging.format;
 
 import com.palantir.witchcraft.api.logging.RequestLogV2;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,8 +38,16 @@ final class RequestLogFormatter {
             buffer.append('[');
             DateTimeFormatter.ISO_INSTANT.formatTo(request.getTime(), buffer);
             buffer.append("] \"");
+
+            Map<String, Object> mergedParameters = new LinkedHashMap<>(
+                    request.getParams().size() + request.getUnsafeParams().size());
+            mergedParameters.putAll(request.getParams());
+            mergedParameters.putAll(request.getUnsafeParams());
+
+            String path = getPathWithParameters(request, mergedParameters);
+
             request.getMethod().ifPresent(method -> buffer.append(method).append(' '));
-            buffer.append(getPathWithParameters(request))
+            buffer.append(path)
                     .append(' ')
                     .append(request.getProtocol())
                     .append("\" ")
@@ -45,29 +55,39 @@ final class RequestLogFormatter {
                     .append(' ')
                     .append(request.getResponseSize().longValue())
                     .append(' ')
-                    .append(request.getDuration().longValue());
+                    .append(request.getDuration().longValue())
+                    .append(" μs");
+
+            if (!mergedParameters.isEmpty()) {
+                buffer.append(' ');
+                Formatting.niceMap(mergedParameters, buffer);
+            }
         });
     }
 
-    private static String getPathWithParameters(RequestLogV2 request) {
+    private static String getPathWithParameters(RequestLogV2 request, Map<String, Object> mergedParameters) {
+        // First consume path params to avoid duplicate data on the formatted line
+        String path = request.getPath();
+        Matcher matcher = REQUEST_PARAMETER_PATTERN.matcher(path);
+        while (matcher.find()) {
+            String name = matcher.group(1);
+            Object value = mergedParameters.remove(name);
+            if (value != null) {
+                path = path.replace("{" + name + "}", Formatting.safeString(value));
+            }
+        }
+
         Object maybeUnsafePath = request.getUnsafeParams().get(UNSAFE_PATH_PARAMETER);
         if (maybeUnsafePath instanceof String) {
             String unsafePath = (String) maybeUnsafePath;
             // Validate that this is a reasonable path value based on a leading slash.
             if (unsafePath.startsWith("/")) {
+                // Remove the unsafe path attribute if it has been consumed
+                mergedParameters.remove(UNSAFE_PATH_PARAMETER, unsafePath);
                 return unsafePath;
             }
         }
-        String path = request.getPath();
-        Matcher matcher = REQUEST_PARAMETER_PATTERN.matcher(path);
-        while (matcher.find()) {
-            String name = matcher.group(1);
-            Object value = request.getParams()
-                    .getOrDefault(name, request.getUnsafeParams().get(name));
-            if (value != null) {
-                path = path.replace("{" + name + "}", Formatting.safeString(value));
-            }
-        }
+
         return path;
     }
 }

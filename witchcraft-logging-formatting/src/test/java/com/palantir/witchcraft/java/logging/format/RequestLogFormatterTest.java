@@ -38,7 +38,7 @@ class RequestLogFormatterTest {
                 .params("param", "value")
                 .build());
 
-        assertThat(formatted).isEqualTo("[2019-12-25T01:02:03Z] \"GET /some/path/value http\" 203 40 99");
+        assertThat(formatted).isEqualTo("[2019-12-25T01:02:03Z] \"GET /some/path/value http\" 203 40 99 μs");
     }
 
     @Test
@@ -56,7 +56,7 @@ class RequestLogFormatterTest {
                 .unsafeParams("path", "/some/path/value")
                 .build());
 
-        assertThat(formatted).isEqualTo("[2019-12-25T01:02:03Z] \"GET /some/path/value http\" 203 40 99");
+        assertThat(formatted).isEqualTo("[2019-12-25T01:02:03Z] \"GET /some/path/value http\" 203 40 99 μs");
     }
 
     @Test
@@ -74,6 +74,8 @@ class RequestLogFormatterTest {
                 .unsafeParams("path", ":witchcraft-logging-formatting")
                 .build());
 
-        assertThat(formatted).isEqualTo("[2019-12-25T01:02:03Z] \"GET /some/path/{unknown} http\" 203 40 99");
+        assertThat(formatted)
+                .isEqualTo("[2019-12-25T01:02:03Z] \"GET /some/path/{unknown} http\" "
+                        + "203 40 99 μs (path: :witchcraft-logging-formatting)");
     }
 }
