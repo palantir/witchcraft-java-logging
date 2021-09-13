@@ -54,7 +54,7 @@ public final class LogParser<T> {
             SERVICE_V1, REQUEST_V2, EVENT_V2, METRIC_V1, TRACE_V1, AUDIT_V2, DIAGNOSTIC_V1, WRAPPED_V1);
 
     private static final String WITCHCRAFT_LOG_PATTERN_STRING = "\\{.*?\"type\"\\s*?:\\s*?\"("
-            + LOG_TYPES.stream().map(Pattern::quote).collect(Collectors.joining("|")) + ")\".*?}";
+            + LOG_TYPES.stream().map(Pattern::quote).collect(Collectors.joining("|")) + ")\".*?}\\R?";
     private static final Pattern WITCHCRAFT_LOG_PATTERN = Pattern.compile(WITCHCRAFT_LOG_PATTERN_STRING);
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()

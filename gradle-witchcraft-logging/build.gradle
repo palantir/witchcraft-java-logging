@@ -32,6 +32,10 @@ gradlePlugin {
             id = 'com.palantir.witchcraft-logging-testreport'
             implementationClass = 'com.palantir.witchcraft.java.logging.gradle.testreport.TestReportFormattingPlugin'
         }
+        witchcraftLoggingOutputPlugin {
+            id = 'com.palantir.witchcraft-logging-output'
+            implementationClass = 'com.palantir.witchcraft.java.logging.gradle.output.FormattedOutputPlugin'
+        }
     }
 }
 
@@ -50,6 +54,9 @@ pluginBundle {
         }
         witchcraftLoggingTestReportPlugin {
             displayName = 'Palantir Witchcraft Logging Test Report Rendering Plugin'
+        }
+        witchcraftLoggingOutputPlugin {
+            displayName = 'Palantir Witchcraft Logging Output Rendering Plugin'
         }
     }
 }
