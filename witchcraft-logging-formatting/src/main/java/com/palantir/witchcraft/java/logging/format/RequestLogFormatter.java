@@ -54,7 +54,7 @@ final class RequestLogFormatter {
                     .append(request.getStatus())
                     .append(' ')
                     .append(request.getResponseSize().longValue())
-                    .append(' ')
+                    .append(" bytes ")
                     .append(request.getDuration().longValue())
                     .append(" μs");
 

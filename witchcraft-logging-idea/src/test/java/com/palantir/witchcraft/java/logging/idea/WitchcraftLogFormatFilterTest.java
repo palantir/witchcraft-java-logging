@@ -54,7 +54,7 @@ public final class WitchcraftLogFormatFilterTest {
             + "\"traceId\":\"ba3200b6eb01999a\",\"unsafeParams\":{\"path\":\"/api/sleep/10\","
             + "\"millis\":\"10\"}}";
     private static final String REQUEST_FORMATTED =
-            "[2019-05-24T16:40:36.703Z] \"GET /api/sleep/10 HTTP/1.1\" 503 78 1935 μs (host: localhost:8443, "
+            "[2019-05-24T16:40:36.703Z] \"GET /api/sleep/10 HTTP/1.1\" 503 78 bytes 1935 μs (host: localhost:8443, "
                     + "connection: Keep-Alive, accept-encoding: gzip, user-agent: okhttp/3.13.1)";
 
     private static final String METRIC_JSON = "{\"type\": \"metric.1\","
