@@ -2,7 +2,6 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'com.palantir.external-publish-jar'
 
-sourceCompatibility = 11
 
 dependencies {
     implementation project(':witchcraft-logging-formatting'), {
