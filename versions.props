@@ -4,6 +4,6 @@ org.immutables:* = 2.8.8
 org.assertj:assertj-core = 3.21.0
 org.junit.jupiter:* = 5.8.2
 org.junit.vintage:* = 5.8.2
-org.mockito:* = 4.1.0
+org.mockito:* = 4.2.0
 org.slf4j:* = 1.7.32
 com.netflix.nebula:nebula-test = 10.0.0
