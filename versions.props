@@ -1,5 +1,5 @@
 com.palantir.witchcraft.api:* = 2.0.0
-com.google.guava:guava = 31.0.1-jre
+com.google.guava:guava = 31.1-jre
 org.immutables:* = 2.8.8
 org.assertj:assertj-core = 3.22.0
 org.junit.jupiter:* = 5.8.2
