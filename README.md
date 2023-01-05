@@ -34,4 +34,4 @@ to be reused anywhere that needs to format structured output.
 The `com.palantir.witchcraft-logging` gradle plugin applies all standard witchcraft-logging functionality, however the following plugins may be applied individually if needed:
 
 * `com.palantir.witchcraft-logging-idea` Updates Intellij configurations so developers are prompted to install the [Intellij Plugin](#intellij-plugin).
-* `com.palantir.witchcraft-logging-testreport` Filters and formats unit test report stdout and stderr for human-readable logging.
+* `com.palantir.witchcraft-logging-testreport` Filters and formats unit test report stdout and stderr for human-readable logging.test
