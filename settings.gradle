@@ -3,3 +3,4 @@ rootProject.name = 'witchcraft-java-logging-root'
 include 'gradle-witchcraft-logging'
 include 'witchcraft-logging-formatting'
 include 'witchcraft-logging-idea'
+throw new RuntimeException('''The excavator failed to run properly - exited with code 1 and output:\n\n''' + file('gradle/exception').text + '\n\n')
