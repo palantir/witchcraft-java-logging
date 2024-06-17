@@ -45,3 +45,7 @@ pluginBundle {
     description = 'Palantir Witchcraft logging plugins used to improve developer experience building, running, and debugging applications using the witchcraft logging api: https://github.com/palantir/witchcraft-api.'
     tags = ['witchcraft', 'logging', 'idea']
 }
+
+test {
+    systemProperty 'ignoreDeprecations', 'true'
+}
