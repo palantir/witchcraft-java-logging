@@ -8,4 +8,4 @@ org.junit.jupiter:* = 5.11.0
 org.junit.vintage:* = 5.11.0
 org.mockito:* = 5.13.0
 org.slf4j:* = 1.7.36
-com.netflix.nebula:nebula-test = 10.0.0
+com.netflix.nebula:nebula-test = 10.6.1
