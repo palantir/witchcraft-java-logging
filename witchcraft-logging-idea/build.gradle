@@ -38,7 +38,7 @@ runPluginVerifier {
             // Idea Ultimate
             "IU-2024.2.1",
             // Goland
-            "GO-2021.2"
+            "GO-2024.2"
             ]
 }
 
