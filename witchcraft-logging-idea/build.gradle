@@ -1,7 +1,4 @@
-apply plugin: 'maven-publish'
-apply plugin: 'org.jetbrains.intellij'
-apply plugin: 'com.palantir.external-publish-jar'
-
+apply plugin: 'com.palantir.external-publish-intellij'
 
 dependencies {
     implementation project(':witchcraft-logging-formatting'), {
@@ -23,16 +20,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core'
 }
 
-versionRecommendations {
-    excludeConfigurations 'idea'
-}
-
-versionsLock {
-    // 'org.jetbrains.intellij' creates a dependency on *IntelliJ*, which GCV cannot resolve
-    disableJavaPluginDefaults()
-}
-
-def minimumIntellijBuild = '203.6682.168' // 2020.3.1
+def minimumIntellijBuild = '211.7628.21' // 2021.1
 intellij {
     pluginName = 'witchcraft-logging-idea'
     version = minimumIntellijBuild
@@ -40,34 +28,18 @@ intellij {
 }
 
 patchPluginXml {
-    version = project.version
     sinceBuild = minimumIntellijBuild
-}
-
-publishPlugin {
-    token = System.env.JETBRAINS_PLUGIN_REPO_TOKEN
 }
 
 runPluginVerifier {
     ideVersions = [
             // Idea Community
-            "IC-2021.2",
+            "IC-2024.1",
             // Idea Ultimate
-            "IU-2020.3.1",
+            "IU-2024.2.1",
             // Goland
-            "GO-2021.2"]
+            "GO-2024.2"
+            ]
 }
 
-check.dependsOn buildPlugin, verifyPlugin, runPluginVerifier
-tasks.publishPlugin.onlyIf { versionDetails().isCleanTag && System.env.JETBRAINS_PLUGIN_REPO_TOKEN != null }
-tasks.publish.dependsOn publishPlugin
-buildSearchableOptions.enabled = false
-// Prevent nebula.maven-publish from trying to publish components.java - we are publishing our own different artifact
-ext."nebulaPublish.maven.jar" = false
-publishing {
-    publications {
-        nebula(MavenPublication) {
-            artifact buildPlugin
-        }
-    }
-}
+check.dependsOn runPluginVerifier
