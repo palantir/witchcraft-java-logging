@@ -20,30 +20,32 @@ dependencies {
 }
 
 gradlePlugin {
+    website = 'https://github.com/palantir/witchcraft-java-logging'
+    vcsUrl = 'https://github.com/palantir/witchcraft-java-logging'
+
     plugins {
         witchcraftLoggingPlugin {
             displayName = 'Palantir Witchcraft Logging Plugin'
             id = 'com.palantir.witchcraft-logging'
             implementationClass = 'com.palantir.witchcraft.java.logging.gradle.WitchcraftLoggingPlugin'
+            description = 'Palantir Witchcraft logging plugins used to improve developer experience building, running, and debugging applications using the witchcraft logging api: https://github.com/palantir/witchcraft-api.'
+            tags.set(['witchcraft', 'logging', 'idea'])
         }
         witchcraftLoggingIdeaPlugin {
             displayName = 'Palantir Witchcraft Logging Idea Plugin'
             id = 'com.palantir.witchcraft-logging-idea'
             implementationClass = 'com.palantir.witchcraft.java.logging.gradle.idea.IdeaPluginRecommenderPlugin'
+            description = 'Palantir Witchcraft logging plugins used to improve developer experience building, running, and debugging applications using the witchcraft logging api: https://github.com/palantir/witchcraft-api.'
+            tags.set(['witchcraft', 'logging', 'idea'])
         }
         witchcraftLoggingTestReportPlugin {
             displayName = 'Palantir Witchcraft Logging Test Report Rendering Plugin'
             id = 'com.palantir.witchcraft-logging-testreport'
             implementationClass = 'com.palantir.witchcraft.java.logging.gradle.testreport.TestReportFormattingPlugin'
+            description = 'Palantir Witchcraft logging plugins used to improve developer experience building, running, and debugging applications using the witchcraft logging api: https://github.com/palantir/witchcraft-api.'
+            tags.set(['witchcraft', 'logging', 'idea'])
         }
     }
-}
-
-pluginBundle {
-    website = 'https://github.com/palantir/witchcraft-java-logging'
-    vcsUrl = 'https://github.com/palantir/witchcraft-java-logging'
-    description = 'Palantir Witchcraft logging plugins used to improve developer experience building, running, and debugging applications using the witchcraft logging api: https://github.com/palantir/witchcraft-api.'
-    tags = ['witchcraft', 'logging', 'idea']
 }
 
 test {
