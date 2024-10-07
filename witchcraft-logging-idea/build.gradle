@@ -20,7 +20,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core'
 }
 
-def minimumIntellijBuild = '221.6008.13' // 2022.1
+def minimumIntellijBuild = '232.10203.10' // 2023.2.4
 intellij {
     pluginName = 'witchcraft-logging-idea'
     version = minimumIntellijBuild
