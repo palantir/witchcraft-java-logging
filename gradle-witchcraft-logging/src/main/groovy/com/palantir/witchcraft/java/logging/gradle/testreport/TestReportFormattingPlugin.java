@@ -17,17 +17,16 @@
 package com.palantir.witchcraft.java.logging.gradle.testreport;
 
 // CHECKSTYLE:OFF
-import java.lang.reflect.InvocationTargetException;
+
 import java.lang.reflect.Method;
 import javax.inject.Inject;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.internal.tasks.testing.report.DefaultTestReport;
+import org.gradle.api.internal.tasks.testing.report.HtmlTestReport;
 import org.gradle.api.internal.tasks.testing.report.TestReporter;
 import org.gradle.api.tasks.testing.AbstractTestTask;
 import org.gradle.internal.operations.BuildOperationExecutor;
 import org.gradle.internal.operations.BuildOperationRunner;
-import org.gradle.util.GradleVersion;
 // CHECKSTYLE:ON
 
 /**
@@ -47,7 +46,10 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
             try {
                 Method method = AbstractTestTask.class.getDeclaredMethod("setTestReporter", TestReporter.class);
                 method.setAccessible(true);
-                method.invoke(task, new FormattingTestReporter(createDefaultTestReport()));
+                method.invoke(
+                        task,
+                        new FormattingTestReporter(
+                                new HtmlTestReport(getBuildOperationRunner(), getBuildOperationExecutor())));
             } catch (ReflectiveOperationException e) {
                 project.getLogger()
                         .error(
@@ -56,27 +58,6 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
                                 e);
             }
         });
-    }
-
-    private DefaultTestReport createDefaultTestReport() {
-        boolean greaterThan8Point8 = GradleVersion.current().compareTo(GradleVersion.version("8.8")) >= 0;
-
-        try {
-            if (greaterThan8Point8) {
-                return DefaultTestReport.class
-                        .getDeclaredConstructor(BuildOperationRunner.class, BuildOperationExecutor.class)
-                        .newInstance(getBuildOperationRunner(), getBuildOperationExecutor());
-            } else {
-                return DefaultTestReport.class
-                        .getDeclaredConstructor(BuildOperationExecutor.class)
-                        .newInstance(getBuildOperationExecutor());
-            }
-        } catch (InstantiationException
-                | IllegalAccessException
-                | InvocationTargetException
-                | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Inject
