@@ -27,15 +27,16 @@ import java.io.Writer;
 import org.gradle.api.Action;
 import org.gradle.api.internal.tasks.testing.junit.result.TestClassResult;
 import org.gradle.api.internal.tasks.testing.junit.result.TestResultsProvider;
+import org.gradle.api.internal.tasks.testing.report.HtmlTestReport;
 import org.gradle.api.internal.tasks.testing.report.TestReporter;
 import org.gradle.api.tasks.testing.TestOutputEvent;
 // CHECKSTYLE:ON
 
-final class FormattingTestReporter implements TestReporter {
+final class FormattingTestReporter811 implements TestReporter {
 
-    private final TestReporter delegate;
+    private final HtmlTestReport delegate;
 
-    FormattingTestReporter(TestReporter delegate) {
+    FormattingTestReporter811(HtmlTestReport delegate) {
         this.delegate = delegate;
     }
 
