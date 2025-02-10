@@ -49,9 +49,7 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
                 Method method = AbstractTestTask.class.getDeclaredMethod("setTestReporter", TestReporter.class);
                 method.setAccessible(true);
 
-                TestReporter formattingReporter = getFormattingReporter();
-
-                method.invoke(task, formattingReporter);
+                method.invoke(task, new FormattingTestReporter(getFormattingDelegate()));
             } catch (ReflectiveOperationException e) {
                 project.getLogger()
                         .error(
@@ -67,13 +65,12 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
      * also stopped extending the TestReporter interface.  So the delegate for the formatting reporter varies either
      * an HtmlTestReport to be compatible with gradle 8.11+ or DefaultTestReport for lower versions.
      */
-    private TestReporter getFormattingReporter() {
+    private Object getFormattingDelegate() {
         boolean greaterThan8Point11 = GradleVersion.current().compareTo(GradleVersion.version("8.11")) >= 0;
         if (greaterThan8Point11) {
-            return new FormattingTestReporter(
-                    new HtmlTestReport(getBuildOperationRunner(), getBuildOperationExecutor()));
+            return new HtmlTestReport(getBuildOperationRunner(), getBuildOperationExecutor());
         } else {
-            return new FormattingTestReporter(createDefaultTestReport());
+            return createDefaultTestReport();
         }
     }
 
