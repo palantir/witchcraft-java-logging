@@ -71,7 +71,7 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
     private TestReporter getFormattingReporter() {
         boolean greaterThan8Point11 = GradleVersion.current().compareTo(GradleVersion.version("8.11")) >= 0;
         if (greaterThan8Point11) {
-            return new FormattingTestReporter811(
+            return new FormattingTestReporter(
                     new HtmlTestReport(getBuildOperationRunner(), getBuildOperationExecutor()));
         } else {
             return new FormattingTestReporter(createDefaultTestReport());

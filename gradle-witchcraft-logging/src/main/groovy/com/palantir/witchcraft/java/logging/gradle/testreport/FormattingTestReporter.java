@@ -27,21 +27,28 @@ import java.io.Writer;
 import org.gradle.api.Action;
 import org.gradle.api.internal.tasks.testing.junit.result.TestClassResult;
 import org.gradle.api.internal.tasks.testing.junit.result.TestResultsProvider;
+import org.gradle.api.internal.tasks.testing.report.HtmlTestReport;
 import org.gradle.api.internal.tasks.testing.report.TestReporter;
 import org.gradle.api.tasks.testing.TestOutputEvent;
 // CHECKSTYLE:ON
 
 final class FormattingTestReporter implements TestReporter {
 
-    private final TestReporter delegate;
+    private final Object delegate;
 
-    FormattingTestReporter(TestReporter delegate) {
+    FormattingTestReporter(Object delegate) {
         this.delegate = delegate;
     }
 
     @Override
     public void generateReport(TestResultsProvider testResultsProvider, File file) {
-        delegate.generateReport(new FormattingTestResultsProvider(testResultsProvider), file);
+        if (delegate instanceof TestReporter) {
+            ((TestReporter) delegate).generateReport(new FormattingTestResultsProvider(testResultsProvider), file);
+        } else if (delegate instanceof HtmlTestReport) {
+            ((HtmlTestReport) delegate).generateReport(new FormattingTestResultsProvider(testResultsProvider), file);
+        } else {
+            throw new IllegalArgumentException("Unknown delegate class: " + delegate.getClass());
+        }
     }
 
     private static final class FormattingTestResultsProvider implements TestResultsProvider {
