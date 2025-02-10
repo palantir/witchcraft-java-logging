@@ -64,9 +64,8 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
 
     /**
      * The internal gradle test report classes changed in 8.11.  DefaultTestReport was renamed to HtmlTestReport and
-     * also stopped extending the TestReporter interface.  So we have to have 2 different formatting reporters, one
-     * that takes an HtmlTestReport to be compatible with gradle 8.11+ and one that takes a TestReporter for lower
-     * versions.
+     * also stopped extending the TestReporter interface.  So the delegate for the formatting reporter varies either
+     * an HtmlTestReport to be compatible with gradle 8.11+ or DefaultTestReport for lower versions.
      */
     private TestReporter getFormattingReporter() {
         boolean greaterThan8Point11 = GradleVersion.current().compareTo(GradleVersion.version("8.11")) >= 0;
