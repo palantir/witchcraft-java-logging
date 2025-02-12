@@ -18,9 +18,10 @@ package com.palantir.witchcraft.java.logging.gradle.testreport
 
 
 import nebula.test.IntegrationSpec
+import org.gradle.util.GradleVersion
 
 class TestReportFormattingPluginIntegrationSpec extends IntegrationSpec {
-    private static final List<String> GRADLE_VERSIONS = ["7.6.4", "8.8"]
+    private static final List<String> GRADLE_VERSIONS = ["7.6.4", "8.8", GradleVersion.current().getVersion()]
 
     def '#gradleVersionNumber: Formats test report stdout and stderr'() {
         gradleVersion = gradleVersionNumber

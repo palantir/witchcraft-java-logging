@@ -17,12 +17,13 @@
 package com.palantir.witchcraft.java.logging.gradle.testreport;
 
 // CHECKSTYLE:OFF
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.inject.Inject;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.internal.tasks.testing.report.DefaultTestReport;
+import org.gradle.api.internal.tasks.testing.report.HtmlTestReport;
 import org.gradle.api.internal.tasks.testing.report.TestReporter;
 import org.gradle.api.tasks.testing.AbstractTestTask;
 import org.gradle.internal.operations.BuildOperationExecutor;
@@ -47,7 +48,8 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
             try {
                 Method method = AbstractTestTask.class.getDeclaredMethod("setTestReporter", TestReporter.class);
                 method.setAccessible(true);
-                method.invoke(task, new FormattingTestReporter(createDefaultTestReport()));
+
+                method.invoke(task, new FormattingTestReporter(getFormattingDelegate()));
             } catch (ReflectiveOperationException e) {
                 project.getLogger()
                         .error(
@@ -58,22 +60,42 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
         });
     }
 
-    private DefaultTestReport createDefaultTestReport() {
+    /**
+     * The internal gradle test report classes changed in 8.11.  DefaultTestReport was renamed to HtmlTestReport and
+     * also stopped extending the TestReporter interface.  So the delegate for the formatting reporter varies either
+     * an HtmlTestReport to be compatible with gradle 8.11+ or DefaultTestReport for lower versions.
+     */
+    private Object getFormattingDelegate() {
+        boolean greaterThan8Point11 = GradleVersion.current().compareTo(GradleVersion.version("8.11")) >= 0;
+        if (greaterThan8Point11) {
+            return new HtmlTestReport(getBuildOperationRunner(), getBuildOperationExecutor());
+        } else {
+            return createDefaultTestReport();
+        }
+    }
+
+    /**
+     * The constructor for DefaultTestReport changed in gradle 8.8.  Dynamically invoke based on runtime version.
+     */
+    private TestReporter createDefaultTestReport() {
         boolean greaterThan8Point8 = GradleVersion.current().compareTo(GradleVersion.version("8.8")) >= 0;
 
         try {
+            Class<TestReporter> defaultTestReporterClass = (Class<TestReporter>)
+                    Class.forName("org.gradle.api.internal.tasks.testing.report.DefaultTestReport");
             if (greaterThan8Point8) {
-                return DefaultTestReport.class
+                return defaultTestReporterClass
                         .getDeclaredConstructor(BuildOperationRunner.class, BuildOperationExecutor.class)
                         .newInstance(getBuildOperationRunner(), getBuildOperationExecutor());
             } else {
-                return DefaultTestReport.class
+                return defaultTestReporterClass
                         .getDeclaredConstructor(BuildOperationExecutor.class)
                         .newInstance(getBuildOperationExecutor());
             }
         } catch (InstantiationException
                 | IllegalAccessException
                 | InvocationTargetException
+                | ClassNotFoundException
                 | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
