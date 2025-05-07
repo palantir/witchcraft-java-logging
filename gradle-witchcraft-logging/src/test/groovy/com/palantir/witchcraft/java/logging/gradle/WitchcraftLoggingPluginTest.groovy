@@ -35,11 +35,11 @@ class WitchcraftLoggingPluginTest extends Specification {
     def appliesToRootProjectAndSubprojects() {
         expect:
         assert project.pluginManager.hasPlugin('com.palantir.witchcraft-logging')
-        assert project.pluginManager.hasPlugin('com.palantir.witchcraft-logging-idea')
+        assert project.pluginManager.hasPlugin('com.palantir.idea-configuration')
         assert project.pluginManager.hasPlugin('com.palantir.witchcraft-logging-testreport')
 
         assert !subProject.pluginManager.hasPlugin('com.palantir.witchcraft-logging')
-        assert !subProject.pluginManager.hasPlugin('com.palantir.witchcraft-logging-idea')
+        assert !subProject.pluginManager.hasPlugin('com.palantir.idea-configuration')
         assert subProject.pluginManager.hasPlugin('com.palantir.witchcraft-logging-testreport')
     }
 }

@@ -8,6 +8,7 @@ dependencies {
     api gradleApi()
     implementation project(':witchcraft-logging-formatting')
     implementation 'com.google.guava:guava'
+    implementation 'com.palantir.gradle.idea-configuration:gradle-idea-configuration'
 
     testImplementation gradleTestKit()
     testImplementation 'com.google.guava:guava'
@@ -29,13 +30,6 @@ gradlePlugin {
             displayName = 'Palantir Witchcraft Logging Plugin'
             id = 'com.palantir.witchcraft-logging'
             implementationClass = 'com.palantir.witchcraft.java.logging.gradle.WitchcraftLoggingPlugin'
-            description = 'Palantir Witchcraft logging plugins used to improve developer experience building, running, and debugging applications using the witchcraft logging api: https://github.com/palantir/witchcraft-api.'
-            tags.set(['witchcraft', 'logging', 'idea'])
-        }
-        witchcraftLoggingIdeaPlugin {
-            displayName = 'Palantir Witchcraft Logging Idea Plugin'
-            id = 'com.palantir.witchcraft-logging-idea'
-            implementationClass = 'com.palantir.witchcraft.java.logging.gradle.idea.IdeaPluginRecommenderPlugin'
             description = 'Palantir Witchcraft logging plugins used to improve developer experience building, running, and debugging applications using the witchcraft logging api: https://github.com/palantir/witchcraft-api.'
             tags.set(['witchcraft', 'logging', 'idea'])
         }

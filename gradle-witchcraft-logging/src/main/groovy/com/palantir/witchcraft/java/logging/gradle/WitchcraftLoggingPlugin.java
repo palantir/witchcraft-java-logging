@@ -16,7 +16,8 @@
 
 package com.palantir.witchcraft.java.logging.gradle;
 
-import com.palantir.witchcraft.java.logging.gradle.idea.IdeaPluginRecommenderPlugin;
+import com.palantir.gradle.ideaconfiguration.IdeaConfigurationExtension;
+import com.palantir.gradle.ideaconfiguration.IdeaConfigurationPlugin;
 import com.palantir.witchcraft.java.logging.gradle.testreport.TestReportFormattingPlugin;
 import java.util.Objects;
 import org.gradle.api.Plugin;
@@ -31,7 +32,10 @@ public final class WitchcraftLoggingPlugin implements Plugin<Project> {
                     WitchcraftLoggingPlugin.class.getSimpleName() + " can only be applied to the root project.");
         }
 
-        rootProject.getPluginManager().apply(IdeaPluginRecommenderPlugin.class);
+        rootProject.getPluginManager().apply(IdeaConfigurationPlugin.class);
+        IdeaConfigurationExtension extension = rootProject.getExtensions().getByType(IdeaConfigurationExtension.class);
+        extension.externalDependency("com.palantir.witchcraft.api.logging.idea", "1.6.0");
+
         rootProject.allprojects(project -> project.getPluginManager().apply(TestReportFormattingPlugin.class));
     }
 }
