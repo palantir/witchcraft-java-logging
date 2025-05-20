@@ -34,8 +34,9 @@ public final class WitchcraftLoggingPlugin implements Plugin<Project> {
 
         rootProject.getPluginManager().apply(IdeaConfigurationPlugin.class);
         IdeaConfigurationExtension extension = rootProject.getExtensions().getByType(IdeaConfigurationExtension.class);
-        extension.externalDependency("com.palantir.witchcraft.api.logging.idea", "1.6.0");
-
+        extension
+                .getExternalDependencies()
+                .register("com.palantir.witchcraft.api.logging.idea", dep -> dep.atLeastVersion("1.6.0"));
         rootProject.allprojects(project -> project.getPluginManager().apply(TestReportFormattingPlugin.class));
     }
 }
