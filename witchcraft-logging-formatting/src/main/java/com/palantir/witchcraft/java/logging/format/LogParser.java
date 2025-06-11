@@ -76,6 +76,7 @@ public final class LogParser<T> {
         return WITCHCRAFT_LOG_PATTERN.matcher(blockOfText).find();
     }
 
+    @SuppressWarnings({"for-rollout:MissingDefault", "for-rollout:StatementSwitchToExpressionSwitch"})
     public Optional<T> tryParse(String logLine) {
         Matcher matcher = WITCHCRAFT_LOG_PATTERN.matcher(logLine);
 
