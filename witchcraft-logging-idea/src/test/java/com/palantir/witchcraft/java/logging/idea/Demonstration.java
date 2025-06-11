@@ -19,6 +19,7 @@ package com.palantir.witchcraft.java.logging.idea;
 /** Executable class which prints several types of log lines for local verification. */
 public final class Demonstration {
 
+    @SuppressWarnings("for-rollout:SystemOut")
     public static void main(String[] _args) {
         System.out.println(EVENT_JSON);
         System.out.println(REQUEST_JSON);

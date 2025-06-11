@@ -78,8 +78,8 @@ final class RequestLogFormatter {
         }
 
         Object maybeUnsafePath = request.getUnsafeParams().get(UNSAFE_PATH_PARAMETER);
-        if (maybeUnsafePath instanceof String) {
-            String unsafePath = (String) maybeUnsafePath;
+        if (maybeUnsafePath instanceof String unsafePath) {
+
             // Validate that this is a reasonable path value based on a leading slash.
             if (unsafePath.startsWith("/")) {
                 // Remove the unsafe path attribute if it has been consumed
