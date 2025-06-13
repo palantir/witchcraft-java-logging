@@ -267,7 +267,6 @@ public final class WitchcraftLogFormatFilterTest {
         return pairs.stream().map(pair -> pair.first).collect(Collectors.joining());
     }
 
-    @SuppressWarnings("for-rollout:InconsistentOverloads")
     @Nullable
     private static String runFilter(InputFilter inputFilter, String input) {
         List<Pair<String, ConsoleViewContentType>> pairs = runFilterWithType(inputFilter, input);
