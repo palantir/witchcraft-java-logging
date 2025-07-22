@@ -76,7 +76,6 @@ public final class LogParser<T> {
         return WITCHCRAFT_LOG_PATTERN.matcher(blockOfText).find();
     }
 
-    @SuppressWarnings("for-rollout:StatementSwitchToExpressionSwitch")
     public Optional<T> tryParse(String logLine) {
         Matcher matcher = WITCHCRAFT_LOG_PATTERN.matcher(logLine);
 
@@ -87,24 +86,32 @@ public final class LogParser<T> {
         String logType = matcher.group(1);
 
         switch (logType) {
-            case SERVICE_V1:
+            case SERVICE_V1 -> {
                 return applyToLogLine(logLine, ServiceLogV1.class, logVisitor::serviceV1);
-            case REQUEST_V2:
+            }
+            case REQUEST_V2 -> {
                 return applyToLogLine(logLine, RequestLogV2.class, logVisitor::requestV2);
-            case EVENT_V2:
+            }
+            case EVENT_V2 -> {
                 return applyToLogLine(logLine, EventLogV2.class, logVisitor::eventV2);
-            case METRIC_V1:
+            }
+            case METRIC_V1 -> {
                 return applyToLogLine(logLine, MetricLogV1.class, logVisitor::metricV1);
-            case TRACE_V1:
+            }
+            case TRACE_V1 -> {
                 return applyToLogLine(logLine, TraceLogV1.class, logVisitor::traceV1);
-            case AUDIT_V2:
+            }
+            case AUDIT_V2 -> {
                 return applyToLogLine(logLine, AuditLogV2.class, logVisitor::auditV2);
-            case DIAGNOSTIC_V1:
+            }
+            case DIAGNOSTIC_V1 -> {
                 return applyToLogLine(logLine, DiagnosticLogV1.class, logVisitor::diagnosticV1);
-            case WRAPPED_V1:
+            }
+            case WRAPPED_V1 -> {
                 return applyToLogLine(logLine, WrappedLogV1.class, wrappedLogV1 -> wrappedLogV1
                         .getPayload()
                         .accept(wrappedLogDelegatingVisitor));
+            }
         }
 
         return Optional.empty();
