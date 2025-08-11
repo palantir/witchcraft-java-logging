@@ -23,6 +23,7 @@ import com.palantir.witchcraft.java.logging.format.LogParser;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.function.BiConsumer;
 import org.gradle.api.Action;
 import org.gradle.api.internal.tasks.testing.junit.result.TestClassResult;
 import org.gradle.api.internal.tasks.testing.junit.result.TestResultsProvider;
@@ -60,6 +61,21 @@ final class FormattingTestReporter implements TestReporter {
                             writer.write("\n");
                         }
                         : Writable.NOP));
+        private static final BiConsumer<String, Writer> LINE_PROCESSOR = (line, outputWriter) -> {
+            try {
+                PARSER.tryParse(line)
+                        .orElseGet(() -> out -> {
+                            try {
+                                out.write(line);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+                        .write(outputWriter);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
 
         private final TestResultsProvider delegate;
 
@@ -71,7 +87,7 @@ final class FormattingTestReporter implements TestReporter {
         public void writeAllOutput(long classId, TestOutputEvent.Destination destination, Writer writer) {
             if (destination == TestOutputEvent.Destination.StdErr
                     || destination == TestOutputEvent.Destination.StdOut) {
-                delegate.writeAllOutput(classId, destination, new LineProcessingWriter(writer, PARSER));
+                delegate.writeAllOutput(classId, destination, new LineProcessingWriter(writer, LINE_PROCESSOR));
             } else {
                 delegate.writeAllOutput(classId, destination, writer);
             }
@@ -79,22 +95,22 @@ final class FormattingTestReporter implements TestReporter {
 
         private static class LineProcessingWriter extends Writer {
             private final Writer delegate;
-            private final LogParser<Writable> parser;
+            private final BiConsumer<String, Writer> lineProcessor;
             private final StringBuilder lineBuffer = new StringBuilder();
 
-            LineProcessingWriter(Writer delegate, LogParser<Writable> parser) {
+            LineProcessingWriter(Writer delegate, BiConsumer<String, Writer> lineProcessor) {
                 this.delegate = delegate;
-                this.parser = parser;
+                this.lineProcessor = lineProcessor;
             }
 
             @Override
             public void write(char[] cbuf, int off, int len) throws IOException {
                 for (int i = off; i < off + len; i++) {
-                    char c = cbuf[i];
-                    if (c == '\n') {
+                    char ch = cbuf[i];
+                    if (ch == '\n') {
                         processLine();
                     } else {
-                        lineBuffer.append(c);
+                        lineBuffer.append(ch);
                     }
                 }
             }
@@ -114,12 +130,8 @@ final class FormattingTestReporter implements TestReporter {
 
             private void processLine() throws IOException {
                 String line = lineBuffer.toString();
-                parser.tryParse(line)
-                        .orElseGet(() -> out -> {
-                            out.write(line);
-                            out.write("\n");
-                        })
-                        .write(delegate);
+                lineProcessor.accept(line, delegate);
+                delegate.write("\n");
                 lineBuffer.setLength(0);
             }
         }
