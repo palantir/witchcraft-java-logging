@@ -18,6 +18,7 @@ package com.palantir.witchcraft.java.logging.gradle.testreport;
 
 // CHECKSTYLE:OFF
 
+import com.google.common.base.Splitter;
 import com.palantir.witchcraft.java.logging.format.LogFormatter;
 import com.palantir.witchcraft.java.logging.format.LogParser;
 import java.io.File;
@@ -69,14 +70,13 @@ final class FormattingTestReporter implements TestReporter {
         }
 
         @Override
-        @SuppressWarnings("StringSplitter")
         public void writeAllOutput(long classId, TestOutputEvent.Destination destination, Writer writer) {
             if (destination == TestOutputEvent.Destination.StdErr
                     || destination == TestOutputEvent.Destination.StdOut) {
                 StringWriter stringWriter = new StringWriter();
                 delegate.writeAllOutput(classId, destination, stringWriter);
                 String contents = stringWriter.toString();
-                for (String line : contents.split("\n")) {
+                Splitter.on('\n').splitToStream(contents).forEachOrdered(line -> {
                     try {
                         PARSER.tryParse(line)
                                 .orElseGet(() -> out -> {
@@ -87,7 +87,7 @@ final class FormattingTestReporter implements TestReporter {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                }
+                });
             } else {
                 delegate.writeAllOutput(classId, destination, writer);
             }
