@@ -18,12 +18,10 @@ package com.palantir.witchcraft.java.logging.gradle.testreport;
 
 // CHECKSTYLE:OFF
 
-import com.google.common.base.Splitter;
 import com.palantir.witchcraft.java.logging.format.LogFormatter;
 import com.palantir.witchcraft.java.logging.format.LogParser;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import org.gradle.api.Action;
 import org.gradle.api.internal.tasks.testing.junit.result.TestClassResult;
@@ -73,23 +71,56 @@ final class FormattingTestReporter implements TestReporter {
         public void writeAllOutput(long classId, TestOutputEvent.Destination destination, Writer writer) {
             if (destination == TestOutputEvent.Destination.StdErr
                     || destination == TestOutputEvent.Destination.StdOut) {
-                StringWriter stringWriter = new StringWriter();
-                delegate.writeAllOutput(classId, destination, stringWriter);
-                String contents = stringWriter.toString();
-                Splitter.on('\n').splitToStream(contents).forEachOrdered(line -> {
-                    try {
-                        PARSER.tryParse(line)
-                                .orElseGet(() -> out -> {
-                                    out.write(line);
-                                    out.write("\n");
-                                })
-                                .write(writer);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                delegate.writeAllOutput(classId, destination, new LineProcessingWriter(writer, PARSER));
             } else {
                 delegate.writeAllOutput(classId, destination, writer);
+            }
+        }
+
+        private static class LineProcessingWriter extends Writer {
+            private final Writer delegate;
+            private final LogParser<Writable> parser;
+            private final StringBuilder lineBuffer = new StringBuilder();
+
+            LineProcessingWriter(Writer delegate, LogParser<Writable> parser) {
+                this.delegate = delegate;
+                this.parser = parser;
+            }
+
+            @Override
+            public void write(char[] cbuf, int off, int len) throws IOException {
+                for (int i = off; i < off + len; i++) {
+                    char c = cbuf[i];
+                    if (c == '\n') {
+                        processLine();
+                    } else {
+                        lineBuffer.append(c);
+                    }
+                }
+            }
+
+            @Override
+            public void flush() throws IOException {
+                delegate.flush();
+            }
+
+            @Override
+            public void close() throws IOException {
+                if (!lineBuffer.isEmpty()) {
+                    processLine();
+                }
+                delegate.close();
+            }
+
+            private void processLine() throws IOException {
+                String line = lineBuffer.toString();
+                parser.tryParse(line)
+                        .orElseGet(() -> out -> {
+                            out.write(line);
+                            out.write("\n");
+                        })
+                        .write(delegate);
+                lineBuffer.setLength(0);
             }
         }
 
