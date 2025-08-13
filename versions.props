@@ -1,7 +1,7 @@
 com.fasterxml.jackson.*:* = 2.19.2
 com.palantir.witchcraft.api:* = 2.0.0
 com.google.guava:guava = 33.4.8-jre
-org.immutables:* = 2.11.2
+org.immutables:* = 2.11.3
 org.assertj:assertj-core = 3.27.4
 org.junit.jupiter:* = 5.13.4
 org.junit.platform:* = 1.13.4
