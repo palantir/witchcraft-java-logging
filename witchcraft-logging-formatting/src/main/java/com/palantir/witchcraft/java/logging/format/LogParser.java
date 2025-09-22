@@ -57,6 +57,7 @@ public final class LogParser<T> {
             + LOG_TYPES.stream().map(Pattern::quote).collect(Collectors.joining("|")) + ")\".*?}";
     private static final Pattern WITCHCRAFT_LOG_PATTERN = Pattern.compile(WITCHCRAFT_LOG_PATTERN_STRING);
 
+    @SuppressWarnings("for-rollout:deprecation")
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
             .registerModule(new Jdk8Module().configureAbsentsAsNulls(true))
             .registerModule(new JavaTimeModule())
