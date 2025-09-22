@@ -22,6 +22,7 @@ import com.palantir.witchcraft.java.logging.format.LogFormatter;
 import com.palantir.witchcraft.java.logging.format.LogParser;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.util.function.BiConsumer;
 import org.gradle.api.Action;
@@ -58,7 +59,7 @@ final class FormattingTestReporter implements TestReporter {
                 (include, formatted) -> include
                         ? writer -> {
                             writer.write(formatted);
-                            writer.write("\n");
+                            writer.write('\n');
                         }
                         : Writable.NOP));
         private static final BiConsumer<String, Writer> LINE_PROCESSOR = (line, outputWriter) -> {
@@ -68,12 +69,12 @@ final class FormattingTestReporter implements TestReporter {
                             try {
                                 out.write(line);
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                throw new UncheckedIOException(e);
                             }
                         })
                         .write(outputWriter);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
         };
 
@@ -131,7 +132,7 @@ final class FormattingTestReporter implements TestReporter {
             private void processLine() throws IOException {
                 String line = lineBuffer.toString();
                 lineProcessor.accept(line, delegate);
-                delegate.write("\n");
+                delegate.write('\n');
                 lineBuffer.setLength(0);
             }
         }
