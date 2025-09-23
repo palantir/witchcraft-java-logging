@@ -18,6 +18,7 @@ package com.palantir.witchcraft.java.logging.gradle.testreport;
 
 // CHECKSTYLE:OFF
 
+import com.google.common.annotations.VisibleForTesting;
 import com.palantir.witchcraft.java.logging.format.LogFormatter;
 import com.palantir.witchcraft.java.logging.format.LogParser;
 import java.io.File;
@@ -43,10 +44,10 @@ final class FormattingTestReporter implements TestReporter {
 
     @Override
     public void generateReport(TestResultsProvider testResultsProvider, File file) {
-        if (delegate instanceof TestReporter) {
-            ((TestReporter) delegate).generateReport(new FormattingTestResultsProvider(testResultsProvider), file);
-        } else if (delegate instanceof HtmlTestReport) {
-            ((HtmlTestReport) delegate).generateReport(new FormattingTestResultsProvider(testResultsProvider), file);
+        if (delegate instanceof TestReporter testReporter) {
+            testReporter.generateReport(new FormattingTestResultsProvider(testResultsProvider), file);
+        } else if (delegate instanceof HtmlTestReport htmlTestReport) {
+            htmlTestReport.generateReport(new FormattingTestResultsProvider(testResultsProvider), file);
         } else {
             throw new IllegalArgumentException("Unknown delegate class: " + delegate.getClass());
         }
@@ -62,6 +63,7 @@ final class FormattingTestReporter implements TestReporter {
                             writer.write('\n');
                         }
                         : Writable.NOP));
+
         private static final BiConsumer<String, Writer> LINE_PROCESSOR = (line, outputWriter) -> {
             try {
                 PARSER.tryParse(line)
@@ -86,54 +88,10 @@ final class FormattingTestReporter implements TestReporter {
 
         @Override
         public void writeAllOutput(long classId, TestOutputEvent.Destination destination, Writer writer) {
-            if (destination == TestOutputEvent.Destination.StdErr
-                    || destination == TestOutputEvent.Destination.StdOut) {
-                delegate.writeAllOutput(classId, destination, new LineProcessingWriter(writer, LINE_PROCESSOR));
-            } else {
-                delegate.writeAllOutput(classId, destination, writer);
-            }
-        }
-
-        private static class LineProcessingWriter extends Writer {
-            private final Writer delegate;
-            private final BiConsumer<String, Writer> lineProcessor;
-            private final StringBuilder lineBuffer = new StringBuilder();
-
-            LineProcessingWriter(Writer delegate, BiConsumer<String, Writer> lineProcessor) {
-                this.delegate = delegate;
-                this.lineProcessor = lineProcessor;
-            }
-
-            @Override
-            public void write(char[] cbuf, int off, int len) throws IOException {
-                for (int i = off; i < off + len; i++) {
-                    char ch = cbuf[i];
-                    if (ch == '\n') {
-                        processLine();
-                    } else {
-                        lineBuffer.append(ch);
-                    }
-                }
-            }
-
-            @Override
-            public void flush() throws IOException {
-                delegate.flush();
-            }
-
-            @Override
-            public void close() throws IOException {
-                if (!lineBuffer.isEmpty()) {
-                    processLine();
-                }
-                delegate.close();
-            }
-
-            private void processLine() throws IOException {
-                String line = lineBuffer.toString();
-                lineProcessor.accept(line, delegate);
-                delegate.write('\n');
-                lineBuffer.setLength(0);
+            switch (destination) {
+                case StdErr, StdOut ->
+                    delegate.writeAllOutput(classId, destination, new LineProcessingWriter(writer, LINE_PROCESSOR));
+                default -> delegate.writeAllOutput(classId, destination, writer);
             }
         }
 
@@ -170,6 +128,71 @@ final class FormattingTestReporter implements TestReporter {
         @Override
         public void close() throws IOException {
             delegate.close();
+        }
+    }
+
+    @VisibleForTesting
+    static class LineProcessingWriter extends Writer {
+        private final Writer delegate;
+        private final BiConsumer<String, Writer> lineProcessor;
+        private final StringBuilder lineBuffer = new StringBuilder();
+
+        LineProcessingWriter(Writer delegate, BiConsumer<String, Writer> lineProcessor) {
+            this.delegate = delegate;
+            this.lineProcessor = lineProcessor;
+        }
+
+        @Override
+        public void write(char[] cbuf, int off, int len) {
+            synchronized (lock) {
+                for (int i = off; i < off + len; i++) {
+                    char ch = cbuf[i];
+                    lineBuffer.append(ch);
+                    if (ch == '\n') {
+                        writeLine();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void write(String str, int off, int len) {
+            synchronized (lock) {
+                for (int startIndex = off; startIndex < off + len; ) {
+                    int newLineIndex = str.indexOf('\n', startIndex);
+                    if (newLineIndex == -1) {
+                        lineBuffer.append(str, startIndex, off + len);
+                        return;
+                    } else {
+                        lineBuffer.append(str, startIndex, newLineIndex + 1);
+                        writeLine();
+                        startIndex = newLineIndex + 1;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void flush() throws IOException {
+            synchronized (lock) {
+                delegate.flush();
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            synchronized (lock) {
+                if (!lineBuffer.isEmpty()) {
+                    writeLine();
+                }
+                delegate.close();
+            }
+        }
+
+        private void writeLine() {
+            String line = lineBuffer.toString();
+            lineProcessor.accept(line, delegate);
+            lineBuffer.setLength(0);
         }
     }
 }
