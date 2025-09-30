@@ -84,13 +84,13 @@ org.junit.jupiter:junit-jupiter-engine:5.13.4 (1 constraints: 3a0e0a4a)
 
 org.junit.jupiter:junit-jupiter-params:5.13.4 (2 constraints: f82423fc)
 
-org.junit.platform:junit-platform-commons:1.13.4 (2 constraints: 39219184)
+org.junit.platform:junit-platform-commons:1.14.0 (2 constraints: 36219084)
 
-org.junit.platform:junit-platform-engine:1.13.4 (4 constraints: 3441687d)
+org.junit.platform:junit-platform-engine:1.14.0 (4 constraints: 2e41f27b)
 
-org.junit.platform:junit-platform-launcher:1.13.4 (1 constraints: 3b05363b)
+org.junit.platform:junit-platform-launcher:1.14.0 (1 constraints: 3805353b)
 
-org.junit.vintage:junit-vintage-engine:5.13.4 (1 constraints: 3f054e3b)
+org.junit.vintage:junit-vintage-engine:5.14.0 (1 constraints: 3c054d3b)
 
 org.mockito:mockito-core:5.20.0 (2 constraints: 2a143986)
 
