@@ -42,7 +42,7 @@ javax.annotation:javax.annotation-api:1.3.2 (1 constraints: f10f7399)
 
 javax.ws.rs:javax.ws.rs-api:2.1.1 (1 constraints: f10f7399)
 
-org.immutables:value-annotations:2.11.5 (1 constraints: 3b05373b)
+org.immutables:value-annotations:2.11.6 (1 constraints: 3c05383b)
 
 org.jspecify:jspecify:1.0.0 (8 constraints: c9803ac0)
 
