@@ -1,4 +1,5 @@
-com.fasterxml.jackson.*:* = 2.19.2
+com.fasterxml.jackson.*:* = 2.20.0
+com.fasterxml.jackson.core:jackson-annotations = 2.20
 com.palantir.witchcraft.api:* = 2.0.0
 com.google.guava:guava = 33.5.0-jre
 org.immutables:* = 2.11.6
