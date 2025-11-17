@@ -22,8 +22,9 @@ import com.palantir.witchcraft.java.logging.format.LogFormatter;
 import com.palantir.witchcraft.java.logging.format.LogParser;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.util.function.BiConsumer;
 import org.gradle.api.Action;
 import org.gradle.api.internal.tasks.testing.junit.result.TestClassResult;
 import org.gradle.api.internal.tasks.testing.junit.result.TestResultsProvider;
@@ -58,9 +59,24 @@ final class FormattingTestReporter implements TestReporter {
                 (include, formatted) -> include
                         ? writer -> {
                             writer.write(formatted);
-                            writer.write("\n");
+                            writer.write('\n');
                         }
                         : Writable.NOP));
+        private static final BiConsumer<String, Writer> LINE_PROCESSOR = (line, outputWriter) -> {
+            try {
+                PARSER.tryParse(line)
+                        .orElseGet(() -> out -> {
+                            try {
+                                out.write(line);
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            }
+                        })
+                        .write(outputWriter);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        };
 
         private final TestResultsProvider delegate;
 
@@ -69,27 +85,55 @@ final class FormattingTestReporter implements TestReporter {
         }
 
         @Override
-        @SuppressWarnings("StringSplitter")
         public void writeAllOutput(long classId, TestOutputEvent.Destination destination, Writer writer) {
             if (destination == TestOutputEvent.Destination.StdErr
                     || destination == TestOutputEvent.Destination.StdOut) {
-                StringWriter stringWriter = new StringWriter();
-                delegate.writeAllOutput(classId, destination, stringWriter);
-                String contents = stringWriter.toString();
-                for (String line : contents.split("\n")) {
-                    try {
-                        PARSER.tryParse(line)
-                                .orElseGet(() -> out -> {
-                                    out.write(line);
-                                    out.write("\n");
-                                })
-                                .write(writer);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+                delegate.writeAllOutput(classId, destination, new LineProcessingWriter(writer, LINE_PROCESSOR));
             } else {
                 delegate.writeAllOutput(classId, destination, writer);
+            }
+        }
+
+        private static class LineProcessingWriter extends Writer {
+            private final Writer delegate;
+            private final BiConsumer<String, Writer> lineProcessor;
+            private final StringBuilder lineBuffer = new StringBuilder();
+
+            LineProcessingWriter(Writer delegate, BiConsumer<String, Writer> lineProcessor) {
+                this.delegate = delegate;
+                this.lineProcessor = lineProcessor;
+            }
+
+            @Override
+            public void write(char[] cbuf, int off, int len) throws IOException {
+                for (int i = off; i < off + len; i++) {
+                    char ch = cbuf[i];
+                    if (ch == '\n') {
+                        processLine();
+                    } else {
+                        lineBuffer.append(ch);
+                    }
+                }
+            }
+
+            @Override
+            public void flush() throws IOException {
+                delegate.flush();
+            }
+
+            @Override
+            public void close() throws IOException {
+                if (!lineBuffer.isEmpty()) {
+                    processLine();
+                }
+                delegate.close();
+            }
+
+            private void processLine() throws IOException {
+                String line = lineBuffer.toString();
+                lineProcessor.accept(line, delegate);
+                delegate.write('\n');
+                lineBuffer.setLength(0);
             }
         }
 
