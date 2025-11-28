@@ -44,3 +44,9 @@ __init__.pyc
 
 # Gradle JDKs setup
 !gradle/*
+
+# Claude local configuration
+.claude/settings.local.json
+
+# Claude local context
+CLAUDE.local.md

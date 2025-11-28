@@ -16,6 +16,7 @@
 
 package com.palantir.witchcraft.java.logging.format;
 
+import com.palantir.witchcraft.api.logging.AuditLogV3;
 import com.palantir.witchcraft.api.logging.EventLogV2;
 import com.palantir.witchcraft.api.logging.MetricLogV1;
 import com.palantir.witchcraft.api.logging.RequestLogV2;
@@ -49,5 +50,10 @@ public enum LogFormatter implements LogVisitor<String> {
     @Override
     public Optional<String> traceV1(TraceLogV1 traceLogV1) {
         return Optional.of(TraceLogFormatter.format(traceLogV1));
+    }
+
+    @Override
+    public Optional<String> auditV3(AuditLogV3 auditLogV3) {
+        return Optional.of(AuditLogV3Formatter.format(auditLogV3));
     }
 }

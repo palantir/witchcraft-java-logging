@@ -1,0 +1,53 @@
+{
+    "type": "audit.3",
+    "deployment": "",
+    "host": "product.palantir.com",
+    "product": "product",
+    "productVersion": "1.2.3",
+    "stack": "dev",
+    "service": "service",
+    "environment": "",
+    "producerType": "SERVER",
+    "organizations": [],
+    "eventId": "7b3b7d65-8467-4e61-b3fb-13c92ee40bbf",
+    "logEntryId": "8ee160b8-0dc2-4b9f-a2c3-879610f07173",
+    "userAgent": "other-product/4.5.6 SomeService/7.8.9 dialogue/6.11.0",
+    "categories": [
+        "dataSearch"
+    ],
+    "entities": [
+        "ri.main.folder.2b65ce71-dc9b-49d9-9c63-4cf4ab4c8e6f"
+    ],
+    "users": [
+        {
+            "uid": "a1991088-7ec3-425b-98cd-561f7e7d0b13",
+            "groups": []
+        }
+    ],
+    "origins": [],
+    "sourceOrigin": "192.168.0.0",
+    "requestParams": {},
+    "requestFields": {
+        "dataSearchQuery": "/namespace-2656ede8-bb13-4b05-a99e-5f96d00ee084-67dff0/57ceda98-46c7-4bba-8590-f5fe4018f81e/",
+        "dataSearchContext": []
+    },
+    "resultParams": {},
+    "resultFields": {
+        "dataSearchResults": [
+            {
+                "id": {
+                    "type": "rid",
+                    "rid": "ri.main.folder.2b65ce71-dc9b-49d9-9c63-4cf4ab4c8e6f"
+                },
+                "context": []
+            }
+        ]
+    },
+    "time": "2025-12-11T18:04:29.202693778Z",
+    "uid": "a1991088-7ec3-425b-98cd-561f7e7d0b13",
+    "sid": "9ad3b508-d0b4-4d64-aa52-533f9390e19c",
+    "traceId": "8574b3df64184edf",
+    "origin": "192.168.0.0",
+    "name": "SOME_SERVICE_GET_RESOURCE_BY_PATH",
+    "result": "SUCCESS"
+}
