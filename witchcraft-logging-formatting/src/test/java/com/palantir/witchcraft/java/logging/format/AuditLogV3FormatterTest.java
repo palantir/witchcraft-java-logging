@@ -49,7 +49,7 @@ class AuditLogV3FormatterTest {
                 .build());
 
         assertThat(formatted)
-                .startsWith("[2019-12-25T01:02:03Z] AUDIT: PUT_FILE (result: SUCCESS)")
+                .startsWith("[2019-12-25T01:02:03Z] AUDIT.3: PUT_FILE (result: SUCCESS)")
                 .contains("requestFields:")
                 .contains("\"fileId\" : \"file123\"")
                 .contains("\"path\" : \"/data/file.txt\"")
@@ -73,7 +73,7 @@ class AuditLogV3FormatterTest {
                 .build());
 
         assertThat(formatted)
-                .startsWith("[2019-12-25T01:02:03Z] AUDIT: DATA_ACCESS (result: SUCCESS)")
+                .startsWith("[2019-12-25T01:02:03Z] AUDIT.3: DATA_ACCESS (result: SUCCESS)")
                 .contains("categories: [DATASET_ACCESS, FILE_READ]");
     }
 
@@ -91,7 +91,7 @@ class AuditLogV3FormatterTest {
                 .build());
 
         assertThat(formatted)
-                .startsWith("[2019-12-25T01:02:03Z] AUDIT: MINIMAL_ACTION (result: SUCCESS)")
+                .startsWith("[2019-12-25T01:02:03Z] AUDIT.3: MINIMAL_ACTION (result: SUCCESS)")
                 .doesNotContain("requestFields:")
                 .doesNotContain("resultFields:");
     }
@@ -112,7 +112,7 @@ class AuditLogV3FormatterTest {
                 .build());
 
         assertThat(formatted)
-                .startsWith("[2019-12-25T01:02:03Z] AUDIT: COMPLEX_ACTION (result: SUCCESS)")
+                .startsWith("[2019-12-25T01:02:03Z] AUDIT.3: COMPLEX_ACTION (result: SUCCESS)")
                 .contains("requestFields:")
                 .contains("resultFields:");
     }
@@ -129,7 +129,7 @@ class AuditLogV3FormatterTest {
                 ObjectMappers.newClientObjectMapper().readValue(exampleRawAuditLog, AuditLogV3.class);
         String formatted = AuditLogV3Formatter.format(exampleAuditLog);
         assertThat(formatted).isEqualToIgnoringWhitespace("""
-            [2025-12-11T18:04:29.202693778Z] AUDIT: SOME_SERVICE_GET_RESOURCE_BY_PATH (result: SUCCESS) (categories: [dataSearch])
+            [2025-12-11T18:04:29.202693778Z] AUDIT.3: SOME_SERVICE_GET_RESOURCE_BY_PATH (result: SUCCESS) (categories: [dataSearch])
                       requestFields: {
                         "dataSearchQuery" : "/namespace-2656ede8-bb13-4b05-a99e-5f96d00ee084-67dff0/57ceda98-46c7-4bba-8590-f5fe4018f81e/",
                         "dataSearchContext" : [ ]

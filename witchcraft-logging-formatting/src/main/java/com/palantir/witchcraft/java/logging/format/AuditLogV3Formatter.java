@@ -26,7 +26,7 @@ final class AuditLogV3Formatter {
         return Formatting.withStringBuilder(buffer -> {
             buffer.append('[');
             DateTimeFormatter.ISO_INSTANT.formatTo(audit.getTime(), buffer);
-            buffer.append("] AUDIT: ").append(audit.getName());
+            buffer.append("] AUDIT.3: ").append(audit.getName());
             buffer.append(" (result: ").append(audit.getResult()).append(')');
 
             // Categories
