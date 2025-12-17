@@ -17,6 +17,7 @@
 package com.palantir.witchcraft.java.logging.format;
 
 import com.palantir.witchcraft.api.logging.AuditLogV2;
+import com.palantir.witchcraft.api.logging.AuditLogV3;
 import com.palantir.witchcraft.api.logging.DiagnosticLogV1;
 import com.palantir.witchcraft.api.logging.EventLogV2;
 import com.palantir.witchcraft.api.logging.MetricLogV1;
@@ -65,6 +66,11 @@ final class CombineWithLogVisitor<T, U, R> implements LogVisitor<R> {
     @Override
     public Optional<R> auditV2(AuditLogV2 auditLogV2) {
         return combineWith(auditLogV2, LogVisitor::auditV2);
+    }
+
+    @Override
+    public Optional<R> auditV3(AuditLogV3 auditLogV3) {
+        return combineWith(auditLogV3, LogVisitor::auditV3);
     }
 
     @Override

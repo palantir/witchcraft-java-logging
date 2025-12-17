@@ -17,6 +17,7 @@
 package com.palantir.witchcraft.java.logging.format;
 
 import com.palantir.witchcraft.api.logging.AuditLogV2;
+import com.palantir.witchcraft.api.logging.AuditLogV3;
 import com.palantir.witchcraft.api.logging.DiagnosticLogV1;
 import com.palantir.witchcraft.api.logging.EventLogV2;
 import com.palantir.witchcraft.api.logging.MetricLogV1;
@@ -60,6 +61,11 @@ final class SupplierLogVisitor<T> implements LogVisitor<T> {
 
     @Override
     public Optional<T> auditV2(AuditLogV2 _auditLogV2) {
+        return get();
+    }
+
+    @Override
+    public Optional<T> auditV3(AuditLogV3 _auditLogV3) {
         return get();
     }
 
