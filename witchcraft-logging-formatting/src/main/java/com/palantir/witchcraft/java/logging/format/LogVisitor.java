@@ -17,6 +17,7 @@
 package com.palantir.witchcraft.java.logging.format;
 
 import com.palantir.witchcraft.api.logging.AuditLogV2;
+import com.palantir.witchcraft.api.logging.AuditLogV3;
 import com.palantir.witchcraft.api.logging.DiagnosticLogV1;
 import com.palantir.witchcraft.api.logging.EventLogV2;
 import com.palantir.witchcraft.api.logging.MetricLogV1;
@@ -50,6 +51,10 @@ public interface LogVisitor<T> {
     }
 
     default Optional<T> auditV2(AuditLogV2 _auditLogV2) {
+        return defaultValue();
+    }
+
+    default Optional<T> auditV3(AuditLogV3 _auditLogV3) {
         return defaultValue();
     }
 

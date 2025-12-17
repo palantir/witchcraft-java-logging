@@ -16,6 +16,9 @@
 
 package com.palantir.witchcraft.java.logging.format;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.CharMatcher;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -24,6 +27,8 @@ import java.util.function.Consumer;
 final class Formatting {
 
     static final CharMatcher NEWLINE_MATCHER = CharMatcher.is('\n');
+
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
     private static final ThreadLocal<StringBuilder> REUSABLE_STRING_BUILDER =
             ThreadLocal.withInitial(() -> new StringBuilder(1024));
@@ -66,6 +71,17 @@ final class Formatting {
             builder.setLength(0);
         }
         return result;
+    }
+
+    static String prettyPrintJson(Map<String, ?> map) {
+        if (map == null || map.isEmpty()) {
+            return "{}";
+        }
+        try {
+            return JSON_MAPPER.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            return map.toString();
+        }
     }
 
     private Formatting() {}

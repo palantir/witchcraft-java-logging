@@ -23,6 +23,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.ImmutableList;
 import com.palantir.witchcraft.api.logging.AuditLogV2;
+import com.palantir.witchcraft.api.logging.AuditLogV3;
 import com.palantir.witchcraft.api.logging.DiagnosticLogV1;
 import com.palantir.witchcraft.api.logging.EventLogV2;
 import com.palantir.witchcraft.api.logging.MetricLogV1;
@@ -48,10 +49,11 @@ public final class LogParser<T> {
     private static final String METRIC_V1 = "metric.1";
     private static final String TRACE_V1 = "trace.1";
     private static final String AUDIT_V2 = "audit.2";
+    private static final String AUDIT_V3 = "audit.3";
     private static final String DIAGNOSTIC_V1 = "diagnostic.1";
     private static final String WRAPPED_V1 = "wrapped.1";
     private static final ImmutableList<String> LOG_TYPES = ImmutableList.of(
-            SERVICE_V1, REQUEST_V2, EVENT_V2, METRIC_V1, TRACE_V1, AUDIT_V2, DIAGNOSTIC_V1, WRAPPED_V1);
+            SERVICE_V1, REQUEST_V2, EVENT_V2, METRIC_V1, TRACE_V1, AUDIT_V2, AUDIT_V3, DIAGNOSTIC_V1, WRAPPED_V1);
 
     private static final String WITCHCRAFT_LOG_PATTERN_STRING = "\\{.*?\"type\"\\s*?:\\s*?\"("
             + LOG_TYPES.stream().map(Pattern::quote).collect(Collectors.joining("|")) + ")\".*?}";
@@ -104,6 +106,9 @@ public final class LogParser<T> {
             }
             case AUDIT_V2 -> {
                 return applyToLogLine(logLine, AuditLogV2.class, logVisitor::auditV2);
+            }
+            case AUDIT_V3 -> {
+                return applyToLogLine(logLine, AuditLogV3.class, logVisitor::auditV3);
             }
             case DIAGNOSTIC_V1 -> {
                 return applyToLogLine(logLine, DiagnosticLogV1.class, logVisitor::diagnosticV1);

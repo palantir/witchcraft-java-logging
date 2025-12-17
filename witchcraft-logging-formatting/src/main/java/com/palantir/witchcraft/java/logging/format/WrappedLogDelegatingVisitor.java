@@ -17,6 +17,7 @@
 package com.palantir.witchcraft.java.logging.format;
 
 import com.palantir.witchcraft.api.logging.AuditLogV2;
+import com.palantir.witchcraft.api.logging.AuditLogV3;
 import com.palantir.witchcraft.api.logging.DiagnosticLogV1;
 import com.palantir.witchcraft.api.logging.EventLogV2;
 import com.palantir.witchcraft.api.logging.MetricLogV1;
@@ -61,6 +62,11 @@ final class WrappedLogDelegatingVisitor<T> implements WrappedLogV1Payload.Visito
     @Override
     public Optional<T> visitAuditLogV2(AuditLogV2 value) {
         return logVisitor.auditV2(value);
+    }
+
+    @Override
+    public Optional<T> visitAuditLogV3(AuditLogV3 value) {
+        return logVisitor.auditV3(value);
     }
 
     @Override
