@@ -12,7 +12,7 @@ com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1 (2 constraints: b1
 
 com.google.code.findbugs:jsr305:3.0.2 (2 constraints: e22b9bbf)
 
-com.google.errorprone:error_prone_annotations:2.41.0 (9 constraints: 969668cb)
+com.google.errorprone:error_prone_annotations:2.41.0 (9 constraints: ca959ab9)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
@@ -30,15 +30,15 @@ com.palantir.gradle.idea-configuration:gradle-idea-configuration:0.3.0 (1 constr
 
 com.palantir.ri:resource-identifier:2.11.0 (1 constraints: 1c108da9)
 
-com.palantir.safe-logging:logger:3.9.0 (3 constraints: 88386239)
+com.palantir.safe-logging:logger:3.10.0 (3 constraints: b0386e62)
 
-com.palantir.safe-logging:logger-slf4j:3.9.0 (1 constraints: 070e6e42)
+com.palantir.safe-logging:logger-slf4j:3.10.0 (1 constraints: 2f0e8750)
 
-com.palantir.safe-logging:logger-spi:3.9.0 (2 constraints: 1d1e0c7c)
+com.palantir.safe-logging:logger-spi:3.10.0 (2 constraints: 6d1ed4af)
 
-com.palantir.safe-logging:preconditions:3.9.0 (7 constraints: 14788e87)
+com.palantir.safe-logging:preconditions:3.10.0 (7 constraints: 64789856)
 
-com.palantir.safe-logging:safe-logging:3.9.0 (9 constraints: 95a27cdf)
+com.palantir.safe-logging:safe-logging:3.10.0 (9 constraints: 5da3c266)
 
 com.palantir.tokens:auth-tokens:3.20.0 (1 constraints: 1d1094a9)
 
@@ -76,9 +76,9 @@ com.fasterxml.jackson.datatype:jackson-datatype-joda:2.20.1 (1 constraints: 7b1c
 
 com.netflix.nebula:nebula-test:10.6.2 (2 constraints: d61de72d)
 
-com.palantir.conjure.java.runtime:conjure-java-jackson-optimizations:8.29.0 (1 constraints: 891cd3a4)
+com.palantir.conjure.java.runtime:conjure-java-jackson-optimizations:8.30.0 (1 constraints: 811cbca4)
 
-com.palantir.conjure.java.runtime:conjure-java-jackson-serialization:8.29.0 (1 constraints: 4505723b)
+com.palantir.conjure.java.runtime:conjure-java-jackson-serialization:8.30.0 (1 constraints: 3d055b3b)
 
 com.palantir.gradle.plugintesting:configuration-cache-spec:0.48.0 (1 constraints: 3e05473b)
 
@@ -88,7 +88,7 @@ com.palantir.gradle.plugintesting:gradle-plugin-testing-junit:0.48.0 (1 constrai
 
 com.palantir.gradle.plugintesting:plugin-testing-core:0.48.0 (1 constraints: 3e05473b)
 
-com.palantir.tritium:tritium-registry:0.122.0 (1 constraints: ab1c3bc1)
+com.palantir.tritium:tritium-registry:0.123.0 (1 constraints: ac1c3ec1)
 
 commons-io:commons-io:2.19.0 (1 constraints: db190cdf)
 
