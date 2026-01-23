@@ -90,13 +90,14 @@ final class HtmlReportPostProcessor {
     }
 
     /**
-     * @return formatted line, empty if filtered out, or original if not a witchcraft log
+     * @return formatted line (with trailing newline), empty if filtered out,
+     *         or original if not a witchcraft log
      */
     private Optional<String> formatLine(String line) {
         String decoded = htmlDecode(line);
 
         return PARSER.tryParse(decoded)
-                .map(opt -> opt.map(HtmlReportPostProcessor::htmlEncode))
+                .map(opt -> opt.map(formatted -> htmlEncode(formatted) + "\n"))
                 .orElse(Optional.of(line));
     }
 

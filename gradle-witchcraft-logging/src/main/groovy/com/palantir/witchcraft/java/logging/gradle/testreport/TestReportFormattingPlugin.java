@@ -39,14 +39,17 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
 
     @Override
     public final void apply(Project project) {
-        project.getTasks().withType(AbstractTestTask.class).configureEach(task -> Optional.ofNullable(task.getReports()
-                        .getHtml()
-                        .getOutputLocation()
-                        .getAsFile()
-                        .getOrNull())
-                .ifPresent(reportDir -> getFlowScope().always(FormatReportAction.class, spec -> spec.getParameters()
-                        .getReportDir()
-                        .set(reportDir))));
+        project.getGradle().projectsEvaluated(_gradle -> project.getTasks()
+                .withType(AbstractTestTask.class)
+                .forEach(task -> Optional.ofNullable(task.getReports()
+                                .getHtml()
+                                .getOutputLocation()
+                                .getAsFile()
+                                .getOrNull())
+                        .ifPresent(reportDir -> getFlowScope()
+                                .always(FormatReportAction.class, spec -> spec.getParameters()
+                                        .getReportDir()
+                                        .set(reportDir)))));
     }
 
     public static final class FormatReportAction implements FlowAction<FormatReportAction.Parameters> {
