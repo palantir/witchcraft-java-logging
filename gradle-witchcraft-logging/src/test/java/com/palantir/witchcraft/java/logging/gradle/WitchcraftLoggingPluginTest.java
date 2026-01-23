@@ -26,20 +26,15 @@ import org.junit.jupiter.api.Test;
 class WitchcraftLoggingPluginTest {
 
     @Test
-    void applies_to_root_project_and_subprojects(GradleInvoker gradle, RootProject rootProject) {
+    void applies_to_root_project_and_subprojects(GradleInvoker gradle, RootProject rootProject, SubProject subProject) {
         rootProject.buildGradle().plugins().add("com.palantir.witchcraft-logging");
 
-        SubProject subProject = rootProject.subproject("subProject");
-
-        // Check plugin application at configuration time (compatible with configuration cache)
-        // Root project should have all three plugins
         rootProject.buildGradle().append("""
             println "root:witchcraft-logging=" + pluginManager.hasPlugin('com.palantir.witchcraft-logging')
             println "root:idea-configuration=" + pluginManager.hasPlugin('com.palantir.idea-configuration')
             println "root:witchcraft-logging-testreport=" + pluginManager.hasPlugin('com.palantir.witchcraft-logging-testreport')
             """);
 
-        // Subproject should only have testreport plugin
         subProject.buildGradle().append("""
             println "sub:witchcraft-logging=" + pluginManager.hasPlugin('com.palantir.witchcraft-logging')
             println "sub:idea-configuration=" + pluginManager.hasPlugin('com.palantir.idea-configuration')
