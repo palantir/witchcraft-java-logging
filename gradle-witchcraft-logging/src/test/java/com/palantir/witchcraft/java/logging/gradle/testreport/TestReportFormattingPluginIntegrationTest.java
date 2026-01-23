@@ -109,8 +109,7 @@ class TestReportFormattingPluginIntegrationTest {
         ArbitraryFile newReportFile =
                 rootProject.buildDir().file("reports/tests/test/com.palantir.SimpleTest/simpleTest.html");
 
-        ArbitraryFile reportFile =
-                legacyReportFile.path().toFile().exists() ? legacyReportFile : newReportFile;
+        ArbitraryFile reportFile = legacyReportFile.path().toFile().exists() ? legacyReportFile : newReportFile;
 
         reportFile
                 .assertThat()
