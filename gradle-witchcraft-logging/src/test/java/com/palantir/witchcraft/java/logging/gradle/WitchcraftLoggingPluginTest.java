@@ -41,7 +41,7 @@ class WitchcraftLoggingPluginTest {
             println "sub:witchcraft-logging-testreport=" + pluginManager.hasPlugin('com.palantir.witchcraft-logging-testreport')
             """);
 
-        gradle.withArgs("help")
+        gradle.withArgs()
                 .buildsSuccessfully()
                 .assertThat()
                 .output()
