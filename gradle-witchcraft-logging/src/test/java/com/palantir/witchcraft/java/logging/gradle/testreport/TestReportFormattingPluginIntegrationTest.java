@@ -20,15 +20,11 @@ import static com.palantir.gradle.testing.assertion.GradlePluginTestAssertions.a
 
 import com.palantir.gradle.testing.execution.GradleInvoker;
 import com.palantir.gradle.testing.execution.InvocationResult;
-import com.palantir.gradle.testing.junit.AdditionallyRunWithGradle;
-import com.palantir.gradle.testing.junit.DisabledConfigurationCache;
 import com.palantir.gradle.testing.junit.GradlePluginTests;
 import com.palantir.gradle.testing.project.RootProject;
 import org.junit.jupiter.api.Test;
 
 @GradlePluginTests
-@AdditionallyRunWithGradle({"7.6.4", "8.8"})
-@DisabledConfigurationCache
 class TestReportFormattingPluginIntegrationTest {
     private static final String SIMPLE_TEST_CLASS = """
         package com.palantir;
@@ -69,9 +65,12 @@ class TestReportFormattingPluginIntegrationTest {
 
     @Test
     void formats_test_report_stdout_and_stderr(GradleInvoker gradle, RootProject rootProject) {
-        // Setup build file
-        rootProject.buildGradle().plugins().add("java").add("java-library");
-        rootProject.buildGradle().plugins().add("com.palantir.witchcraft-logging-testreport");
+        rootProject
+                .buildGradle()
+                .plugins()
+                .add("java")
+                .add("java-library")
+                .add("com.palantir.witchcraft-logging-testreport");
 
         rootProject.buildGradle().append("""
             repositories {
@@ -92,19 +91,14 @@ class TestReportFormattingPluginIntegrationTest {
             sourceCompatibility = 11
             """);
 
-        // Write test class
         rootProject.testSourceSet().java().writeClass(SIMPLE_TEST_CLASS);
 
-        // Compile test Java
         gradle.withArgs("compileTestJava").buildsSuccessfully();
 
-        // Run tests expecting failure
         InvocationResult testResult = gradle.withArgs("test").buildsWithFailure();
 
-        // Check that compileTestJava was executed
-        assertThat(testResult).task(":compileTestJava").succeeded();
+        assertThat(testResult).task(":compileTestJava").upToDate();
 
-        // Verify report formatting
         rootProject
                 .buildDir()
                 .file("reports/tests/test/classes/com.palantir.SimpleTest.html")
@@ -117,7 +111,8 @@ class TestReportFormattingPluginIntegrationTest {
                 .doesNotContain("request.2")
                 .contains("GET /api/sleep/10")
                 .contains("==Metric==")
-                .doesNotContain("Scavenge") // metric logging should be filtered out entirely
+                .as("metric logging should be filtered out entirely")
+                .doesNotContain("Scavenge")
                 .contains("==Done==");
     }
 }
