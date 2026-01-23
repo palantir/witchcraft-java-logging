@@ -39,7 +39,10 @@ final class HtmlReportPostProcessor {
     private static final LogParser<Optional<String>> PARSER = new LogParser<>(TestLogFilter.INSTANCE.combineWith(
             LogFormatter.INSTANCE, (include, formatted) -> include ? Optional.of(formatted) : Optional.empty()));
 
-    private static final Pattern PRE_PATTERN = Pattern.compile("(<pre[^>]*>)(.*?)(</pre>)", Pattern.DOTALL);
+    // Match <pre> tags within stdout/stderr sections: <h2>standard output</h2>...<pre>...</pre>
+    private static final Pattern OUTPUT_SECTION_PATTERN = Pattern.compile(
+            "(<h2>standard (?:output|error)</h2>\\s*<span[^>]*>\\s*<pre[^>]*>)(.*?)(</pre>)",
+            Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     void processReportDirectory(File reportDir) {
         Optional.ofNullable(reportDir).filter(File::isDirectory).ifPresent(this::walkAndProcessHtmlFiles);
@@ -67,7 +70,7 @@ final class HtmlReportPostProcessor {
     }
 
     String processHtmlContent(String html) {
-        Matcher matcher = PRE_PATTERN.matcher(html);
+        Matcher matcher = OUTPUT_SECTION_PATTERN.matcher(html);
         StringBuilder result = new StringBuilder();
 
         while (matcher.find()) {
