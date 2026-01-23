@@ -36,22 +36,18 @@ import java.util.stream.Stream;
  */
 final class HtmlReportPostProcessor {
 
-    private static final LogParser<Optional<String>> PARSER =
-            new LogParser<>(TestLogFilter.INSTANCE.combineWith(LogFormatter.INSTANCE, (include, formatted) ->
-                    include ? Optional.of(formatted) : Optional.empty()));
+    private static final LogParser<Optional<String>> PARSER = new LogParser<>(TestLogFilter.INSTANCE.combineWith(
+            LogFormatter.INSTANCE, (include, formatted) -> include ? Optional.of(formatted) : Optional.empty()));
 
     private static final Pattern PRE_PATTERN = Pattern.compile("(<pre[^>]*>)(.*?)(</pre>)", Pattern.DOTALL);
 
     void processReportDirectory(File reportDir) {
-        Optional.ofNullable(reportDir)
-                .filter(File::isDirectory)
-                .ifPresent(this::walkAndProcessHtmlFiles);
+        Optional.ofNullable(reportDir).filter(File::isDirectory).ifPresent(this::walkAndProcessHtmlFiles);
     }
 
     private void walkAndProcessHtmlFiles(File reportDir) {
         try (Stream<Path> paths = Files.walk(reportDir.toPath())) {
-            paths.filter(path -> path.toString().endsWith(".html"))
-                    .forEach(this::processHtmlFile);
+            paths.filter(path -> path.toString().endsWith(".html")).forEach(this::processHtmlFile);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
