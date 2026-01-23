@@ -14,43 +14,19 @@
  * limitations under the License.
  */
 
-package com.palantir.witchcraft.java.logging.gradle.testreport
+package com.palantir.witchcraft.java.logging.gradle.testreport;
 
+import static com.palantir.gradle.testing.assertion.GradlePluginTestAssertions.assertThat;
 
-import nebula.test.IntegrationSpec
-import org.gradle.util.GradleVersion
+import com.palantir.gradle.testing.execution.GradleInvoker;
+import com.palantir.gradle.testing.execution.InvocationResult;
+import com.palantir.gradle.testing.junit.GradlePluginTests;
+import com.palantir.gradle.testing.project.RootProject;
+import org.junit.jupiter.api.Test;
 
-class TestReportFormattingPluginIntegrationSpec extends IntegrationSpec {
-    private static final List<String> GRADLE_VERSIONS = ["7.6.4", "8.8", GradleVersion.current().getVersion()]
-
-    def '#gradleVersionNumber: Formats test report stdout and stderr'() {
-        gradleVersion = gradleVersionNumber
-
-        when:
-        buildFile << """
-        apply plugin: 'java'
-        apply plugin: 'java-library'
-        ${applyPlugin(TestReportFormattingPlugin)}
-
-        repositories {
-            mavenCentral()
-        }
-
-        test {
-            reports {
-                junitXml.required = true
-                html.required = true
-            }               
-        }
-
-        dependencies {
-            testImplementation 'junit:junit:4.13.2'
-        }
-
-        sourceCompatibility = 11
-        """.stripIndent()
-
-        writeUnitTest("""
+@GradlePluginTests
+class TestReportFormattingPluginIntegrationTest {
+    private static final String SIMPLE_TEST_CLASS = """
         package com.palantir;
         import org.junit.Test;
 
@@ -85,25 +61,58 @@ class TestReportFormattingPluginIntegrationSpec extends IntegrationSpec {
                 throw new AssertionError("==Done==");
             }
         }
-        """.stripIndent())
+        """;
 
-        then:
-        runTasksSuccessfully('compileTestJava')
-        def testResult = runTasksWithFailure('test')
-        testResult.wasExecuted('compileTestJava')
-        def htmlReport = file('build/reports/tests/test/classes/com.palantir.SimpleTest.html').text
-        htmlReport.contains('==Service==')
-        !htmlReport.contains('service.1')
-        htmlReport.contains('ERROR [2019-05-09T15:32:37.692Z] [main] ROOT: test good {} (good: :-))')
-        htmlReport.contains('==Request==')
-        !htmlReport.contains('request.2')
-        htmlReport.contains('GET /api/sleep/10')
-        htmlReport.contains('==Metric==')
-        // metric logging should be filtered out entirely
-        !htmlReport.contains('Scavenge')
-        htmlReport.contains('==Done==')
+    @Test
+    void formats_test_report_stdout_and_stderr(GradleInvoker gradle, RootProject rootProject) {
+        rootProject
+                .buildGradle()
+                .plugins()
+                .add("java")
+                .add("java-library")
+                .add("com.palantir.witchcraft-logging-testreport");
 
-        where:
-        gradleVersionNumber << GRADLE_VERSIONS
+        rootProject.buildGradle().append("""
+            repositories {
+                mavenCentral()
+            }
+
+            test {
+                reports {
+                    junitXml.required = true
+                    html.required = true
+                }
+            }
+
+            dependencies {
+                testImplementation 'junit:junit:4.13.2'
+            }
+
+            sourceCompatibility = 11
+            """);
+
+        rootProject.testSourceSet().java().writeClass(SIMPLE_TEST_CLASS);
+
+        gradle.withArgs("compileTestJava").buildsSuccessfully();
+
+        InvocationResult testResult = gradle.withArgs("test").buildsWithFailure();
+
+        assertThat(testResult).task(":compileTestJava").upToDate();
+
+        rootProject
+                .buildDir()
+                .file("reports/tests/test/classes/com.palantir.SimpleTest.html")
+                .assertThat()
+                .content()
+                .contains("==Service==")
+                .doesNotContain("service.1")
+                .contains("ERROR [2019-05-09T15:32:37.692Z] [main] ROOT: test good {} (good: :-))")
+                .contains("==Request==")
+                .doesNotContain("request.2")
+                .contains("GET /api/sleep/10")
+                .contains("==Metric==")
+                .as("metric logging should be filtered out entirely")
+                .doesNotContain("Scavenge")
+                .contains("==Done==");
     }
 }
