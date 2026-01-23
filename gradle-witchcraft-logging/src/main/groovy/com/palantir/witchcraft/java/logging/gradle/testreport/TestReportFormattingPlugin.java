@@ -16,96 +16,46 @@
 
 package com.palantir.witchcraft.java.logging.gradle.testreport;
 
-// CHECKSTYLE:OFF
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.File;
+import java.util.Optional;
 import javax.inject.Inject;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.internal.tasks.testing.report.HtmlTestReport;
-import org.gradle.api.internal.tasks.testing.report.TestReporter;
+import org.gradle.api.flow.FlowAction;
+import org.gradle.api.flow.FlowParameters;
+import org.gradle.api.flow.FlowScope;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.testing.AbstractTestTask;
-import org.gradle.internal.operations.BuildOperationExecutor;
-import org.gradle.internal.operations.BuildOperationRunner;
-import org.gradle.util.GradleVersion;
-// CHECKSTYLE:ON
 
 /**
- * In its current form, this plugin may generously be described as "a workaround".
- * I've filed <a href="https://github.com/gradle/gradle/issues/17966">gradle#17966</a>
- * upstream to find a better solution.
- * We may be able to consume the xml test report and generate our own html based on that
- * if the current approach becomes troublesome, that would allow us to color individual
- * lines much like our intellij plugin.
+ * Plugin that formats witchcraft structured logging output in HTML test reports.
+ * Post-processes generated HTML files to replace JSON log lines with formatted versions.
  */
 public abstract class TestReportFormattingPlugin implements Plugin<Project> {
 
+    @Inject
+    protected abstract FlowScope getFlowScope();
+
     @Override
-    @SuppressWarnings("Slf4jLogsafeArgs")
-    public final void apply(Project project) {
-        project.getTasks().withType(AbstractTestTask.class).configureEach(task -> {
-            try {
-                Method method = AbstractTestTask.class.getDeclaredMethod("setTestReporter", TestReporter.class);
-                method.setAccessible(true);
-
-                method.invoke(task, new FormattingTestReporter(getFormattingDelegate()));
-            } catch (ReflectiveOperationException e) {
-                project.getLogger()
-                        .error(
-                                "Failed to update task '{}' TestReporter to format structured logging output",
-                                task.getName(),
-                                e);
-            }
-        });
+    public void apply(Project project) {
+        project.getTasks().withType(AbstractTestTask.class).configureEach(task ->
+                Optional.ofNullable(task.getReports().getHtml().getOutputLocation().getAsFile().getOrNull())
+                        .ifPresent(reportDir -> getFlowScope().always(FormatReportAction.class, spec ->
+                                spec.getParameters().getReportDir().set(reportDir))));
     }
 
-    /**
-     * The internal gradle test report classes changed in 8.11.  DefaultTestReport was renamed to HtmlTestReport and
-     * also stopped extending the TestReporter interface.  So the delegate for the formatting reporter varies either
-     * an HtmlTestReport to be compatible with gradle 8.11+ or DefaultTestReport for lower versions.
-     */
-    private Object getFormattingDelegate() {
-        boolean greaterThan8Point11 = GradleVersion.current().compareTo(GradleVersion.version("8.11")) >= 0;
-        if (greaterThan8Point11) {
-            return new HtmlTestReport(getBuildOperationRunner(), getBuildOperationExecutor());
-        } else {
-            return createDefaultTestReport();
+    public abstract static class FormatReportAction implements FlowAction<FormatReportAction.Parameters> {
+        interface Parameters extends FlowParameters {
+            @Input
+            Property<File> getReportDir();
+        }
+
+        @Override
+        public void execute(Parameters parameters) {
+            Optional.ofNullable(parameters.getReportDir().getOrNull())
+                    .filter(File::exists)
+                    .ifPresent(reportDir -> new HtmlReportPostProcessor().processReportDirectory(reportDir));
         }
     }
-
-    /**
-     * The constructor for DefaultTestReport changed in gradle 8.8.  Dynamically invoke based on runtime version.
-     */
-    private TestReporter createDefaultTestReport() {
-        boolean greaterThan8Point8 = GradleVersion.current().compareTo(GradleVersion.version("8.8")) >= 0;
-
-        try {
-            Class<TestReporter> defaultTestReporterClass = (Class<TestReporter>)
-                    Class.forName("org.gradle.api.internal.tasks.testing.report.DefaultTestReport");
-            if (greaterThan8Point8) {
-                return defaultTestReporterClass
-                        .getDeclaredConstructor(BuildOperationRunner.class, BuildOperationExecutor.class)
-                        .newInstance(getBuildOperationRunner(), getBuildOperationExecutor());
-            } else {
-                return defaultTestReporterClass
-                        .getDeclaredConstructor(BuildOperationExecutor.class)
-                        .newInstance(getBuildOperationExecutor());
-            }
-        } catch (InstantiationException
-                | IllegalAccessException
-                | InvocationTargetException
-                | ClassNotFoundException
-                | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Inject
-    @SuppressWarnings("DesignForExtension")
-    protected abstract BuildOperationExecutor getBuildOperationExecutor();
-
-    @Inject
-    @SuppressWarnings("DesignForExtension")
-    protected abstract BuildOperationRunner getBuildOperationRunner();
 }

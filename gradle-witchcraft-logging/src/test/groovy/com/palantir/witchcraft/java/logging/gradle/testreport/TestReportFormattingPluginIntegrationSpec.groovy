@@ -21,7 +21,7 @@ import nebula.test.IntegrationSpec
 import org.gradle.util.GradleVersion
 
 class TestReportFormattingPluginIntegrationSpec extends IntegrationSpec {
-    private static final List<String> GRADLE_VERSIONS = ["7.6.4", "8.8", GradleVersion.current().getVersion()]
+    private static final List<String> GRADLE_VERSIONS = ["8.8", GradleVersion.current().getVersion(), "9.3.0"]
 
     def '#gradleVersionNumber: Formats test report stdout and stderr'() {
         gradleVersion = gradleVersionNumber
@@ -47,7 +47,11 @@ class TestReportFormattingPluginIntegrationSpec extends IntegrationSpec {
             testImplementation 'junit:junit:4.13.2'
         }
 
-        sourceCompatibility = 11
+        java {
+            sourceCompatibility = JavaVersion.VERSION_11
+            targetCompatibility = JavaVersion.VERSION_11
+        }
+
         """.stripIndent()
 
         writeUnitTest("""
@@ -91,7 +95,10 @@ class TestReportFormattingPluginIntegrationSpec extends IntegrationSpec {
         runTasksSuccessfully('compileTestJava')
         def testResult = runTasksWithFailure('test')
         testResult.wasExecuted('compileTestJava')
-        def htmlReport = file('build/reports/tests/test/classes/com.palantir.SimpleTest.html').text
+        // Gradle 9+ uses a different report structure
+        def legacyReportFile = file('build/reports/tests/test/classes/com.palantir.SimpleTest.html')
+        def newReportFile = file('build/reports/tests/test/com.palantir.SimpleTest/simpleTest.html')
+        def htmlReport = legacyReportFile.exists() && legacyReportFile.text ? legacyReportFile.text : newReportFile.text
         htmlReport.contains('==Service==')
         !htmlReport.contains('service.1')
         htmlReport.contains('ERROR [2019-05-09T15:32:37.692Z] [main] ROOT: test good {} (good: :-))')
