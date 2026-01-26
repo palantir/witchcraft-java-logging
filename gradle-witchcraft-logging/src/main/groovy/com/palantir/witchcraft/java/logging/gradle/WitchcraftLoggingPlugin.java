@@ -22,6 +22,7 @@ import com.palantir.witchcraft.java.logging.gradle.testreport.TestReportFormatti
 import java.util.Objects;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.util.GradleVersion;
 
 /** One-stop-shop for a fantastic developer experience with witchcraft-logging projects. */
 public final class WitchcraftLoggingPlugin implements Plugin<Project> {
@@ -30,6 +31,11 @@ public final class WitchcraftLoggingPlugin implements Plugin<Project> {
         if (!Objects.equals(rootProject, rootProject.getRootProject())) {
             throw new IllegalArgumentException(
                     WitchcraftLoggingPlugin.class.getSimpleName() + " can only be applied to the root project.");
+        }
+
+        if (GradleVersion.current().compareTo(GradleVersion.version("8.1")) < 0) {
+            throw new IllegalArgumentException(WitchcraftLoggingPlugin.class.getSimpleName()
+                    + " can only be applied if using Gradle version 8.1 or newer.");
         }
 
         rootProject.getPluginManager().apply(IdeaConfigurationPlugin.class);
