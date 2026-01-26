@@ -25,6 +25,7 @@ import org.gradle.api.flow.FlowAction;
 import org.gradle.api.flow.FlowParameters;
 import org.gradle.api.flow.FlowScope;
 import org.gradle.api.provider.Property;
+import org.gradle.api.reporting.DirectoryReport;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.testing.AbstractTestTask;
 
@@ -39,28 +40,27 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
 
     @Override
     public final void apply(Project project) {
-        project.getGradle().projectsEvaluated(_gradle -> project.getTasks()
-                .withType(AbstractTestTask.class)
-                .forEach(task -> Optional.ofNullable(task.getReports()
-                                .getHtml()
-                                .getOutputLocation()
-                                .getAsFile()
-                                .getOrNull())
-                        .ifPresent(reportDir -> getFlowScope()
-                                .always(FormatReportAction.class, spec -> spec.getParameters()
-                                        .getReportDir()
-                                        .set(reportDir)))));
+        project.getTasks().withType(AbstractTestTask.class).configureEach(task -> {
+            getFlowScope().always(FormatReportAction.class, spec -> spec.getParameters()
+                    .getReportDir()
+                    .set(task.getReports().getHtml()));
+        });
     }
 
     public static final class FormatReportAction implements FlowAction<FormatReportAction.Parameters> {
         interface Parameters extends FlowParameters {
             @Input
-            Property<File> getReportDir();
+            Property<DirectoryReport> getReportDir();
         }
 
         @Override
         public void execute(Parameters parameters) {
-            Optional.ofNullable(parameters.getReportDir().getOrNull())
+            Optional.ofNullable(parameters
+                            .getReportDir()
+                            .get()
+                            .getOutputLocation()
+                            .getAsFile()
+                            .getOrNull())
                     .filter(File::exists)
                     .ifPresent(reportDir -> new HtmlReportPostProcessor().processReportDirectory(reportDir));
         }
