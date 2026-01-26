@@ -98,7 +98,7 @@ final class HtmlReportPostProcessor {
 
         return PARSER.tryParse(decoded)
                 .map(opt -> opt.map(formatted -> htmlEncode(formatted) + "\n"))
-                .orElse(Optional.of(line));
+                .orElseGet(() -> Optional.of(line));
     }
 
     private static String htmlDecode(String html) {
