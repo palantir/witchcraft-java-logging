@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * Post-processes HTML test report files to apply witchcraft log formatting.
@@ -94,32 +95,10 @@ final class HtmlReportPostProcessor {
      *         or original if not a witchcraft log
      */
     private Optional<String> formatLine(String line) {
-        String decoded = htmlDecode(line);
+        String decoded = StringEscapeUtils.unescapeHtml4(line);
 
         return PARSER.tryParse(decoded)
-                .map(opt -> opt.map(formatted -> htmlEncode(formatted) + "\n"))
+                .map(opt -> opt.map(formatted -> StringEscapeUtils.escapeHtml4(formatted) + "\n"))
                 .orElseGet(() -> Optional.of(line));
-    }
-
-    private static String htmlDecode(String html) {
-        return html.replace("&lt;", "<")
-                .replace("&gt;", ">")
-                .replace("&amp;", "&")
-                .replace("&quot;", "\"")
-                .replace("&#39;", "'")
-                .replace("&#x27;", "'");
-    }
-
-    private static String htmlEncode(String text) {
-        return text.chars()
-                .mapToObj(c -> switch (c) {
-                    case '&' -> "&amp;";
-                    case '<' -> "&lt;";
-                    case '>' -> "&gt;";
-                    case '"' -> "&quot;";
-                    case '\'' -> "&#39;";
-                    default -> String.valueOf((char) c);
-                })
-                .collect(Collectors.joining());
     }
 }

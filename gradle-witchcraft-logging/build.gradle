@@ -9,6 +9,7 @@ dependencies {
     implementation project(':witchcraft-logging-formatting')
     implementation 'com.google.guava:guava'
     implementation 'com.palantir.gradle.idea-configuration:gradle-idea-configuration'
+    implementation 'org.apache.commons:commons-text'
 
     testImplementation gradleTestKit()
     testImplementation 'com.google.guava:guava'
