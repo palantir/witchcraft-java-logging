@@ -17,7 +17,6 @@
 package com.palantir.witchcraft.java.logging.gradle.testreport;
 
 import java.io.File;
-import java.util.Optional;
 import javax.inject.Inject;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -55,14 +54,13 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
 
         @Override
         public void execute(Parameters parameters) {
-            Optional.ofNullable(parameters
-                            .getReportDir()
-                            .get()
-                            .getOutputLocation()
-                            .getAsFile()
-                            .getOrNull())
-                    .filter(File::exists)
-                    .ifPresent(reportDir -> new HtmlReportPostProcessor().processReportDirectory(reportDir));
+            File reportDirectory = parameters.getReportDir().get().getOutputLocation().getAsFile().getOrNull();
+
+            if (reportDirectory == null || !reportDirectory.exists()) {
+                return;
+            }
+
+            new HtmlReportPostProcessor().processReportDirectory(reportDirectory);
         }
     }
 }
