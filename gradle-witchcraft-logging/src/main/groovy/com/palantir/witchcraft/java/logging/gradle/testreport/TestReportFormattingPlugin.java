@@ -54,7 +54,12 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
 
         @Override
         public void execute(Parameters parameters) {
-            File reportDirectory = parameters.getReportDir().get().getOutputLocation().getAsFile().getOrNull();
+            File reportDirectory = parameters
+                    .getReportDir()
+                    .get()
+                    .getOutputLocation()
+                    .getAsFile()
+                    .getOrNull();
 
             if (reportDirectory == null || !reportDirectory.exists()) {
                 return;
