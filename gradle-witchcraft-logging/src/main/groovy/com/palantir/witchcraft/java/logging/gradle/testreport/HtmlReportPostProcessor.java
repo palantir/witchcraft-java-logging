@@ -122,4 +122,6 @@ final class HtmlReportPostProcessor {
                 })
                 .collect(Collectors.joining());
     }
+
+    private HtmlReportPostProcessor() {}
 }
