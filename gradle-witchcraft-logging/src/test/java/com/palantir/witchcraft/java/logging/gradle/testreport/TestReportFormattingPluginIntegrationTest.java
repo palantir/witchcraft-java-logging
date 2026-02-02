@@ -20,8 +20,10 @@ import static com.palantir.gradle.testing.assertion.GradlePluginTestAssertions.a
 
 import com.palantir.gradle.testing.execution.GradleInvoker;
 import com.palantir.gradle.testing.execution.InvocationResult;
-import com.palantir.gradle.testing.files.arbitrary.ArbitraryFile;
 import com.palantir.gradle.testing.junit.GradlePluginTests;
+import com.palantir.gradle.testing.junit.InjectByGradleVersion;
+import com.palantir.gradle.testing.junit.ParameterizedByGradleVersion;
+import com.palantir.gradle.testing.junit.ParameterizedByGradleVersion.WhenVersion;
 import com.palantir.gradle.testing.project.RootProject;
 import org.junit.jupiter.api.Test;
 
@@ -65,7 +67,14 @@ class TestReportFormattingPluginIntegrationTest {
         """;
 
     @Test
-    void formats_test_report_stdout_and_stderr(GradleInvoker gradle, RootProject rootProject) {
+    @ParameterizedByGradleVersion(
+            when =
+                    @WhenVersion(
+                            lessThan = "9.3.0",
+                            stringValue = "reports/tests/test/classes/com.palantir.SimpleTest.html"),
+            otherwiseString = "reports/tests/test/com.palantir.SimpleTest/simpleTest.html")
+    void formats_test_report_stdout_and_stderr(
+            GradleInvoker gradle, RootProject rootProject, @InjectByGradleVersion String reportPath) {
         rootProject
                 .buildGradle()
                 .plugins()
@@ -102,16 +111,9 @@ class TestReportFormattingPluginIntegrationTest {
 
         assertThat(testResult).task(":compileTestJava").upToDate();
 
-        // Gradle 8 uses classes/com.palantir.SimpleTest.html
-        // Gradle 9 uses com.palantir.SimpleTest/simpleTest.html
-        ArbitraryFile legacyReportFile =
-                rootProject.buildDir().file("reports/tests/test/classes/com.palantir.SimpleTest.html");
-        ArbitraryFile newReportFile =
-                rootProject.buildDir().file("reports/tests/test/com.palantir.SimpleTest/simpleTest.html");
-
-        ArbitraryFile reportFile = legacyReportFile.path().toFile().exists() ? legacyReportFile : newReportFile;
-
-        reportFile
+        rootProject
+                .buildDir()
+                .file(reportPath)
                 .assertThat()
                 .content()
                 .contains("==Service==")
