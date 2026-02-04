@@ -92,7 +92,7 @@ final class HtmlReportPostProcessor {
 
     /**
      * @return formatted line (with trailing newline), empty if filtered out,
-     *         or original if not a witchcraft log
+     * or original if not a witchcraft log
      */
     private Optional<String> formatLine(String line) {
         String decoded = StringEscapeUtils.unescapeHtml4(line);
