@@ -80,13 +80,13 @@ com.palantir.conjure.java.runtime:conjure-java-jackson-optimizations:8.30.0 (1 c
 
 com.palantir.conjure.java.runtime:conjure-java-jackson-serialization:8.30.0 (1 constraints: 3d055b3b)
 
-com.palantir.gradle.plugintesting:configuration-cache-spec:0.53.0 (1 constraints: 3a053c3b)
+com.palantir.gradle.plugintesting:configuration-cache-spec:0.54.0 (1 constraints: 3b053f3b)
 
-com.palantir.gradle.plugintesting:discover-tests-cli:0.53.0 (1 constraints: 3a053c3b)
+com.palantir.gradle.plugintesting:discover-tests-cli:0.54.0 (1 constraints: 3b053f3b)
 
-com.palantir.gradle.plugintesting:gradle-plugin-testing-junit:0.53.0 (1 constraints: 3a053c3b)
+com.palantir.gradle.plugintesting:gradle-plugin-testing-junit:0.54.0 (1 constraints: 3b053f3b)
 
-com.palantir.gradle.plugintesting:plugin-testing-core:0.53.0 (1 constraints: 3a053c3b)
+com.palantir.gradle.plugintesting:plugin-testing-core:0.54.0 (1 constraints: 3b053f3b)
 
 com.palantir.tritium:tritium-registry:0.123.0 (1 constraints: ac1c3ec1)
 
