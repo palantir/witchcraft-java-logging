@@ -74,7 +74,7 @@ final class HtmlReportPostProcessor {
     private String formatPreContent(String content) {
         return content.lines()
                 .map(this::formatLine)
-                .flatMap(Optional::stream)
+                .<String>mapMulti(Optional::ifPresent)
                 .collect(Collectors.joining("\n"));
     }
 
