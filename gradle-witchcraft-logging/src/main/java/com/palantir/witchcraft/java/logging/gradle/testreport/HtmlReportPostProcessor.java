@@ -83,9 +83,7 @@ final class HtmlReportPostProcessor {
      * or original if not a witchcraft log
      */
     private Optional<String> formatLine(String line) {
-        String decoded = StringEscapeUtils.unescapeHtml4(line);
-
-        return PARSER.tryParse(decoded)
+        return PARSER.tryParse(StringEscapeUtils.unescapeHtml4(line))
                 .map(opt -> opt.map(formatted -> StringEscapeUtils.escapeHtml4(formatted) + "\n"))
                 .orElseGet(() -> Optional.of(line));
     }
