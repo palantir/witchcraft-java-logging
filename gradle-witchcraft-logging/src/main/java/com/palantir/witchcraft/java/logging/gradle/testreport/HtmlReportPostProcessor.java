@@ -70,7 +70,7 @@ final class HtmlReportPostProcessor {
         }
     }
 
-    String processHtmlContent(String html) {
+    private String processHtmlContent(String html) {
         Matcher matcher = OUTPUT_SECTION_PATTERN.matcher(html);
         StringBuilder result = new StringBuilder();
 
