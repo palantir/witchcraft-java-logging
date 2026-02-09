@@ -24,9 +24,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,7 +58,10 @@ final class HtmlReportPostProcessor {
     private void processHtmlFile(Path htmlFile) {
         try {
             String content = Files.readString(htmlFile, StandardCharsets.UTF_8);
-            String processed = processHtmlContent(content);
+
+            String processed = OUTPUT_SECTION_PATTERN
+                    .matcher(content)
+                    .replaceAll(match -> match.group(1) + formatPreContent(match.group(2)) + match.group(3));
 
             if (!content.equals(processed)) {
                 Files.writeString(htmlFile, processed, StandardCharsets.UTF_8);
@@ -70,23 +71,10 @@ final class HtmlReportPostProcessor {
         }
     }
 
-    private String processHtmlContent(String html) {
-        Matcher matcher = OUTPUT_SECTION_PATTERN.matcher(html);
-        StringBuilder result = new StringBuilder();
-
-        while (matcher.find()) {
-            String replacement = matcher.group(1) + formatPreContent(matcher.group(2)) + matcher.group(3);
-            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
-        }
-        matcher.appendTail(result);
-
-        return result.toString();
-    }
-
     private String formatPreContent(String content) {
-        return Arrays.stream(content.split("\n"))
+        return content.lines()
                 .map(this::formatLine)
-                .<String>mapMulti(Optional::ifPresent)
+                .flatMap(Optional::stream)
                 .collect(Collectors.joining("\n"));
     }
 
