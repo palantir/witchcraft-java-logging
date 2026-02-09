@@ -1,5 +1,4 @@
 major-versions:
+  9: 9.3.0
   8: 8.14.3
-  7: 7.6.4
-extra-versions:
-  - 8.8
+extra-versions: []

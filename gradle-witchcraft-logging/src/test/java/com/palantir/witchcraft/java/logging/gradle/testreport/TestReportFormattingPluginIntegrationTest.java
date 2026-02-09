@@ -21,6 +21,9 @@ import static com.palantir.gradle.testing.assertion.GradlePluginTestAssertions.a
 import com.palantir.gradle.testing.execution.GradleInvoker;
 import com.palantir.gradle.testing.execution.InvocationResult;
 import com.palantir.gradle.testing.junit.GradlePluginTests;
+import com.palantir.gradle.testing.junit.InjectByGradleVersion;
+import com.palantir.gradle.testing.junit.ParameterizedByGradleVersion;
+import com.palantir.gradle.testing.junit.ParameterizedByGradleVersion.WhenVersion;
 import com.palantir.gradle.testing.project.RootProject;
 import org.junit.jupiter.api.Test;
 
@@ -64,7 +67,14 @@ class TestReportFormattingPluginIntegrationTest {
         """;
 
     @Test
-    void formats_test_report_stdout_and_stderr(GradleInvoker gradle, RootProject rootProject) {
+    @ParameterizedByGradleVersion(
+            when =
+                    @WhenVersion(
+                            lessThan = "9.3.0",
+                            stringValue = "reports/tests/test/classes/com.palantir.SimpleTest.html"),
+            otherwiseString = "reports/tests/test/com.palantir.SimpleTest/simpleTest.html")
+    void formats_test_report_stdout_and_stderr(
+            GradleInvoker gradle, RootProject rootProject, @InjectByGradleVersion String reportPath) {
         rootProject
                 .buildGradle()
                 .plugins()
@@ -88,7 +98,9 @@ class TestReportFormattingPluginIntegrationTest {
                 testImplementation 'junit:junit:4.13.2'
             }
 
-            sourceCompatibility = 11
+            java {
+                sourceCompatibility = 11
+            }
             """);
 
         rootProject.testSourceSet().java().writeClass(SIMPLE_TEST_CLASS);
@@ -101,7 +113,7 @@ class TestReportFormattingPluginIntegrationTest {
 
         rootProject
                 .buildDir()
-                .file("reports/tests/test/classes/com.palantir.SimpleTest.html")
+                .file(reportPath)
                 .assertThat()
                 .content()
                 .contains("==Service==")
