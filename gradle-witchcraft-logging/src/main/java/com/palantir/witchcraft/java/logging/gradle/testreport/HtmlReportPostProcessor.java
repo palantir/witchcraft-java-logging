@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,10 +59,7 @@ final class HtmlReportPostProcessor {
     private void processHtmlFile(Path htmlFile) {
         try {
             String content = Files.readString(htmlFile, StandardCharsets.UTF_8);
-
-            String processed = OUTPUT_SECTION_PATTERN
-                    .matcher(content)
-                    .replaceAll(match -> match.group(1) + formatPreContent(match.group(2)) + match.group(3));
+            String processed = processHtmlContent(content);
 
             if (!content.equals(processed)) {
                 Files.writeString(htmlFile, processed, StandardCharsets.UTF_8);
@@ -69,6 +67,19 @@ final class HtmlReportPostProcessor {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private String processHtmlContent(String html) {
+        Matcher matcher = OUTPUT_SECTION_PATTERN.matcher(html);
+        StringBuilder result = new StringBuilder();
+
+        while (matcher.find()) {
+            String replacement = matcher.group(1) + formatPreContent(matcher.group(2)) + matcher.group(3);
+            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
     }
 
     private String formatPreContent(String content) {
