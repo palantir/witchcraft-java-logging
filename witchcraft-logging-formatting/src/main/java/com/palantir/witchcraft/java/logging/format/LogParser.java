@@ -60,7 +60,7 @@ public final class LogParser<T> {
     private static final Pattern WITCHCRAFT_LOG_PATTERN = Pattern.compile(WITCHCRAFT_LOG_PATTERN_STRING);
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-            .registerModule(new Jdk8Module().configureAbsentsAsNulls(true))
+            .registerModule(new Jdk8Module())
             .registerModule(new JavaTimeModule())
             .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .disable(DeserializationFeature.WRAP_EXCEPTIONS)
