@@ -29,6 +29,30 @@ import org.junit.jupiter.api.Test;
 
 @GradlePluginTests
 class TestReportFormattingPluginIntegrationTest {
+
+    private static final String LARGE_OUTPUT_TEST_CLASS = """
+        package com.palantir;
+        import org.junit.Test;
+
+        public final class LargeOutputTest {
+            private static final String SERVICE_JSON = "{\\"type\\":\\"service.1\\",\\"level\\":\\"ERROR\\","
+                + "\\"time\\":\\"2019-05-09T15:32:37.692Z\\",\\"origin\\":\\"ROOT\\","
+                + "\\"thread\\":\\"main\\",\\"message\\":\\"test good {}\\","
+                + "\\"params\\":{\\"good\\":\\":-)\\"},\\"unsafeParams\\":{},\\"tags\\":{}}";
+
+            @Test
+            public void largeOutputTest() {
+                // Print enough JSON log lines to create a report that will OOM the post-processor
+                // Each line is ~250 chars; 500K lines = ~125MB of stdout
+                // With 3x memory factor in HtmlReportPostProcessor, needs ~375MB to process
+                for (int i = 0; i < 500_000; i++) {
+                    System.out.println(SERVICE_JSON);
+                }
+                throw new AssertionError("done");
+            }
+        }
+        """;
+
     private static final String SIMPLE_TEST_CLASS = """
         package com.palantir;
         import org.junit.Test;
@@ -126,5 +150,63 @@ class TestReportFormattingPluginIntegrationTest {
                 .as("metric logging should be filtered out entirely")
                 .doesNotContain("Scavenge")
                 .contains("==Done==");
+    }
+
+    @Test
+    @ParameterizedByGradleVersion(
+            when =
+                    @WhenVersion(
+                            lessThan = "9.3.0",
+                            stringValue = "reports/tests/test/classes/com.palantir.LargeOutputTest.html"),
+            otherwiseString = "reports/tests/test/com.palantir.LargeOutputTest/largeOutputTest.html")
+    void handles_large_report_without_oom(
+            GradleInvoker gradle, RootProject rootProject, @InjectByGradleVersion String reportPath) {
+        rootProject
+                .buildGradle()
+                .plugins()
+                .add("java")
+                .add("java-library")
+                .add("com.palantir.witchcraft-logging-testreport");
+
+        rootProject.buildGradle().append("""
+            repositories {
+                mavenCentral()
+            }
+
+            test {
+                reports {
+                    junitXml.required = true
+                    html.required = true
+                }
+                // Give test worker enough heap to print 500K lines
+                maxHeapSize = '512m'
+            }
+
+            dependencies {
+                testImplementation 'junit:junit:4.13.2'
+            }
+
+            java {
+                sourceCompatibility = 11
+            }
+            """);
+
+        // Constrain Gradle daemon heap so in-memory processing will OOM
+        rootProject.gradlePropertiesFile().appendProperty("org.gradle.jvmargs", "-Xmx256m");
+
+        rootProject.testSourceSet().java().writeClass(LARGE_OUTPUT_TEST_CLASS);
+
+        gradle.withArgs("compileTestJava").buildsSuccessfully();
+
+        gradle.withArgs("test").buildsWithFailure();
+
+        rootProject
+                .buildDir()
+                .file(reportPath)
+                .assertThat()
+                .content()
+                .contains("ERROR [2019-05-09T15:32:37.692Z]")
+                .doesNotContain("service.1")
+                .contains("done");
     }
 }
