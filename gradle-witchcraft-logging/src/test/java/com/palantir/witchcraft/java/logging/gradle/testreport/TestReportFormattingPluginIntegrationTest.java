@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2021 Palantir Technologies Inc. All rights reserved.
+ * (c) Copyright 2026 Palantir Technologies Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.palantir.gradle.testing.junit.InjectByGradleVersion;
 import com.palantir.gradle.testing.junit.ParameterizedByGradleVersion;
 import com.palantir.gradle.testing.junit.ParameterizedByGradleVersion.WhenVersion;
 import com.palantir.gradle.testing.project.RootProject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @GradlePluginTests
@@ -88,15 +89,8 @@ class TestReportFormattingPluginIntegrationTest {
         }
         """;
 
-    @Test
-    @ParameterizedByGradleVersion(
-            when =
-                    @WhenVersion(
-                            lessThan = "9.3.0",
-                            stringValue = "reports/tests/test/classes/com.palantir.SimpleTest.html"),
-            otherwiseString = "reports/tests/test/com.palantir.SimpleTest/simpleTest.html")
-    void formats_test_report_stdout_and_stderr(
-            GradleInvoker gradle, RootProject rootProject, @InjectByGradleVersion String reportPath) {
+    @BeforeEach
+    public void beforeEach(RootProject rootProject) {
         rootProject
                 .buildGradle()
                 .plugins()
@@ -124,7 +118,17 @@ class TestReportFormattingPluginIntegrationTest {
                 sourceCompatibility = 11
             }
             """);
+    }
 
+    @Test
+    @ParameterizedByGradleVersion(
+            when =
+                    @WhenVersion(
+                            lessThan = "9.3.0",
+                            stringValue = "reports/tests/test/classes/com.palantir.SimpleTest.html"),
+            otherwiseString = "reports/tests/test/com.palantir.SimpleTest/simpleTest.html")
+    void formats_test_report_stdout_and_stderr(
+            GradleInvoker gradle, RootProject rootProject, @InjectByGradleVersion String reportPath) {
         rootProject.testSourceSet().java().writeClass(SIMPLE_TEST_CLASS);
 
         gradle.withArgs("compileTestJava").buildsSuccessfully();
@@ -159,36 +163,6 @@ class TestReportFormattingPluginIntegrationTest {
             otherwiseString = "reports/tests/test/com.palantir.LargeOutputTest/largeOutputTest.html")
     void handles_large_report_without_oom(
             GradleInvoker gradle, RootProject rootProject, @InjectByGradleVersion String reportPath) {
-        rootProject
-                .buildGradle()
-                .plugins()
-                .add("java")
-                .add("java-library")
-                .add("com.palantir.witchcraft-logging-testreport");
-
-        rootProject.buildGradle().append("""
-            repositories {
-                mavenCentral()
-            }
-
-            test {
-                reports {
-                    junitXml.required = true
-                    html.required = true
-                }
-                // Give test worker enough heap to print 500K lines
-                maxHeapSize = '512m'
-            }
-
-            dependencies {
-                testImplementation 'junit:junit:4.13.2'
-            }
-
-            java {
-                sourceCompatibility = 11
-            }
-            """);
-
         // Constrain Gradle daemon heap so in-memory processing will OOM
         rootProject.gradlePropertiesFile().setProperty("org.gradle.jvmargs", "-Xmx256m");
 
