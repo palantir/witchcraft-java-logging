@@ -63,7 +63,15 @@ final class StreamState {
         }
     }
 
-    private record StepResult(Optional<String> remainder, State next) {}
+    private record StepResult(Optional<String> remainder, State next) {
+        static StepResult of(State next) {
+            return new StepResult(Optional.empty(), next);
+        }
+
+        static StepResult of(String remainder) {
+            return new StepResult(Optional.of(remainder), InPre.INSTANCE);
+        }
+    }
 
     private sealed interface State {
         StepResult step(StreamState ctx, String input) throws IOException;
@@ -79,9 +87,9 @@ final class StreamState {
         public StepResult step(StreamState ctx, String input) throws IOException {
             ctx.passthrough(input);
             if (OUTPUT_HEADER_PATTERN.matcher(input).find()) {
-                return new StepResult(Optional.empty(), AwaitingPre.INSTANCE);
+                return StepResult.of(AwaitingPre.INSTANCE);
             }
-            return new StepResult(Optional.empty(), this);
+            return StepResult.of(this);
         }
     }
 
@@ -95,14 +103,13 @@ final class StreamState {
             Matcher matcher = PRE_OPEN_PATTERN.matcher(input);
             if (!matcher.find()) {
                 ctx.passthrough(input);
-                return new StepResult(Optional.empty(), this);
+                return StepResult.of(this);
             }
 
             ctx.writer.write(input, 0, matcher.end());
             ctx.writer.newLine();
 
-            String remainder = input.substring(matcher.end());
-            return new StepResult(remainder.isEmpty() ? Optional.empty() : Optional.of(remainder), InPre.INSTANCE);
+            return StepResult.of(input.substring(matcher.end()));
         }
     }
 
@@ -114,7 +121,7 @@ final class StreamState {
             int closeIdx = input.indexOf("</pre>");
             if (closeIdx < 0) {
                 ctx.formatAndWrite(input);
-                return new StepResult(Optional.empty(), this);
+                return StepResult.of(this);
             }
 
             if (closeIdx > 0) {
@@ -122,7 +129,7 @@ final class StreamState {
             }
             ctx.writer.write(input, closeIdx, input.length() - closeIdx);
             ctx.writer.newLine();
-            return new StepResult(Optional.empty(), Default.INSTANCE);
+            return StepResult.of(Default.INSTANCE);
         }
     }
 
