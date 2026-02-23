@@ -43,11 +43,6 @@ final class StreamState {
     private static final LogParser<Optional<String>> PARSER = new LogParser<>(TestLogFilter.INSTANCE.combineWith(
             LogFormatter.INSTANCE, (include, formatted) -> include ? Optional.of(formatted) : Optional.empty()));
 
-    private static final Pattern OUTPUT_HEADER_PATTERN =
-            Pattern.compile("<h2>standard (?:output|error)</h2>", Pattern.CASE_INSENSITIVE);
-    private static final Pattern PRE_OPEN_PATTERN = Pattern.compile("<pre[^>]*>");
-    private static final String PRE_CLOSE = "</pre>";
-
     private final BufferedWriter writer;
     private State state = Default.INSTANCE;
 
@@ -77,6 +72,9 @@ final class StreamState {
     private static final class Default implements State {
         static final State INSTANCE = new Default();
 
+        private static final Pattern OUTPUT_HEADER_PATTERN =
+                Pattern.compile("<h2>standard (?:output|error)</h2>", Pattern.CASE_INSENSITIVE);
+
         @Override
         public StepResult step(StreamState ctx, String input) throws IOException {
             ctx.passthrough(input);
@@ -89,6 +87,8 @@ final class StreamState {
 
     private static final class AwaitingPre implements State {
         static final State INSTANCE = new AwaitingPre();
+
+        private static final Pattern PRE_OPEN_PATTERN = Pattern.compile("<pre[^>]*>");
 
         @Override
         public StepResult step(StreamState ctx, String input) throws IOException {
@@ -108,6 +108,8 @@ final class StreamState {
 
     private static final class InPre implements State {
         static final State INSTANCE = new InPre();
+
+        private static final String PRE_CLOSE = "</pre>";
 
         @Override
         public StepResult step(StreamState ctx, String input) throws IOException {
