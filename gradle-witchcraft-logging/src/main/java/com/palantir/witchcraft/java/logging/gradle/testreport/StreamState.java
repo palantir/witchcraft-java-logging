@@ -48,85 +48,82 @@ final class StreamState {
     private static final Pattern PRE_OPEN_PATTERN = Pattern.compile("<pre[^>]*>");
     private static final String PRE_CLOSE = "</pre>";
 
-    private enum Phase {
-        DEFAULT,
-        AWAITING_PRE,
-        IN_PRE,
-    }
-
     private final BufferedWriter writer;
-    private Phase phase = Phase.DEFAULT;
+    private State state = Default.INSTANCE;
 
     StreamState(BufferedWriter writer) {
         this.writer = writer;
     }
 
     void processLine(String line) {
-        // A single input line may require a second step when stepAwaitingPre
-        // finds a <pre> tag with trailing content that belongs to IN_PRE.
         try {
-            Optional<String> remainder = step(line);
-            if (remainder.isPresent()) {
-                step(remainder.get());
+            StepResult result = state.step(this, line);
+            state = result.next();
+            if (result.remainder().isPresent()) {
+                result = state.step(this, result.remainder().get());
+                state = result.next();
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
-    /**
-     * Executes a single state-machine step. Returns any unconsumed remainder of
-     * the line that should be re-fed into the next state, or empty if the line
-     * has been fully consumed.
-     */
-    private Optional<String> step(String input) throws IOException {
-        return switch (phase) {
-            case DEFAULT -> stepDefault(input);
-            case AWAITING_PRE -> stepAwaitingPre(input);
-            case IN_PRE -> stepInPre(input);
-        };
+    private record StepResult(Optional<String> remainder, State next) {}
+
+    private sealed interface State {
+        StepResult step(StreamState ctx, String input) throws IOException;
     }
 
-    private Optional<String> stepDefault(String input) throws IOException {
-        passthrough(input);
-        if (OUTPUT_HEADER_PATTERN.matcher(input).find()) {
-            phase = Phase.AWAITING_PRE;
+    private static final class Default implements State {
+        static final State INSTANCE = new Default();
+
+        @Override
+        public StepResult step(StreamState ctx, String input) throws IOException {
+            ctx.passthrough(input);
+            if (OUTPUT_HEADER_PATTERN.matcher(input).find()) {
+                return new StepResult(Optional.empty(), AwaitingPre.INSTANCE);
+            }
+            return new StepResult(Optional.empty(), this);
         }
-        return Optional.empty();
     }
 
-    private Optional<String> stepAwaitingPre(String input) throws IOException {
-        Matcher matcher = PRE_OPEN_PATTERN.matcher(input);
-        if (!matcher.find()) {
-            passthrough(input);
-            return Optional.empty();
+    private static final class AwaitingPre implements State {
+        static final State INSTANCE = new AwaitingPre();
+
+        @Override
+        public StepResult step(StreamState ctx, String input) throws IOException {
+            Matcher matcher = PRE_OPEN_PATTERN.matcher(input);
+            if (!matcher.find()) {
+                ctx.passthrough(input);
+                return new StepResult(Optional.empty(), this);
+            }
+
+            ctx.writer.write(input, 0, matcher.end());
+            ctx.writer.newLine();
+
+            String remainder = input.substring(matcher.end());
+            return new StepResult(remainder.isEmpty() ? Optional.empty() : Optional.of(remainder), InPre.INSTANCE);
         }
-
-        // Write everything up to and including the <pre> tag.
-        writer.write(input, 0, matcher.end());
-        writer.newLine();
-        phase = Phase.IN_PRE;
-
-        // Anything after the <pre> tag belongs to IN_PRE.
-        String remainder = input.substring(matcher.end());
-        return remainder.isEmpty() ? Optional.empty() : Optional.of(remainder);
     }
 
-    private Optional<String> stepInPre(String input) throws IOException {
-        int closeIdx = input.indexOf(PRE_CLOSE);
-        if (closeIdx < 0) {
-            formatAndWrite(input);
-            return Optional.empty();
-        }
+    private static final class InPre implements State {
+        static final State INSTANCE = new InPre();
 
-        // Format the content before </pre>, then write </pre> and anything after it.
-        if (closeIdx > 0) {
-            formatAndWrite(input.substring(0, closeIdx));
+        @Override
+        public StepResult step(StreamState ctx, String input) throws IOException {
+            int closeIdx = input.indexOf(PRE_CLOSE);
+            if (closeIdx < 0) {
+                ctx.formatAndWrite(input);
+                return new StepResult(Optional.empty(), this);
+            }
+
+            if (closeIdx > 0) {
+                ctx.formatAndWrite(input.substring(0, closeIdx));
+            }
+            ctx.writer.write(input, closeIdx, input.length() - closeIdx);
+            ctx.writer.newLine();
+            return new StepResult(Optional.empty(), Default.INSTANCE);
         }
-        writer.write(input, closeIdx, input.length() - closeIdx);
-        writer.newLine();
-        phase = Phase.DEFAULT;
-        return Optional.empty();
     }
 
     private void passthrough(String line) throws IOException {
