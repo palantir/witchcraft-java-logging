@@ -109,11 +109,9 @@ final class StreamState {
     private static final class InPre implements State {
         static final State INSTANCE = new InPre();
 
-        private static final String PRE_CLOSE = "</pre>";
-
         @Override
         public StepResult step(StreamState ctx, String input) throws IOException {
-            int closeIdx = input.indexOf(PRE_CLOSE);
+            int closeIdx = input.indexOf("</pre>");
             if (closeIdx < 0) {
                 ctx.formatAndWrite(input);
                 return new StepResult(Optional.empty(), this);
