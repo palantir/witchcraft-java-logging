@@ -40,26 +40,99 @@ import org.apache.commons.text.StringEscapeUtils;
 ///        └──────── </pre> ── formatAndWrite ────────┘
 /// ```
 final class StreamState {
-    private static final LogParser<Optional<String>> PARSER = new LogParser<>(TestLogFilter.INSTANCE.combineWith(
-            LogFormatter.INSTANCE, (include, formatted) -> include ? Optional.of(formatted) : Optional.empty()));
-
-    private final BufferedWriter writer;
+    private final LineWriter lineWriter;
     private State state = Default.INSTANCE;
 
     StreamState(BufferedWriter writer) {
-        this.writer = writer;
+        this.lineWriter = new LineWriter(writer);
     }
 
     void processLine(String line) {
         try {
-            StepResult result = state.step(this, line);
+            StepResult result = state.step(lineWriter, line);
             state = result.next();
             if (result.remainder().isPresent()) {
-                result = state.step(this, result.remainder().get());
+                result = state.step(lineWriter, result.remainder().get());
                 state = result.next();
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        }
+    }
+
+    private static final class Default implements State {
+        static final State INSTANCE = new Default();
+
+        private static final Pattern OUTPUT_HEADER_PATTERN =
+                Pattern.compile("<h2>standard (?:output|error)</h2>", Pattern.CASE_INSENSITIVE);
+
+        @Override
+        public StepResult step(LineWriter writer, String input) throws IOException {
+            writer.writeLine(input);
+            if (OUTPUT_HEADER_PATTERN.matcher(input).find()) {
+                return StepResult.of(AwaitingPre.INSTANCE);
+            }
+            return StepResult.of(this);
+        }
+    }
+
+    private static final class AwaitingPre implements State {
+        static final State INSTANCE = new AwaitingPre();
+
+        private static final Pattern PRE_OPEN_PATTERN = Pattern.compile("<pre[^>]*>");
+
+        @Override
+        public StepResult step(LineWriter writer, String input) throws IOException {
+            Matcher matcher = PRE_OPEN_PATTERN.matcher(input);
+            if (!matcher.find()) {
+                writer.writeLine(input);
+                return StepResult.of(this);
+            }
+
+            writer.writeLine(input.substring(0, matcher.end()));
+
+            return StepResult.of(input.substring(matcher.end()));
+        }
+    }
+
+    private static final class InPre implements State {
+        private static final LogParser<Optional<String>> PARSER = new LogParser<>(TestLogFilter.INSTANCE.combineWith(
+                LogFormatter.INSTANCE, (include, formatted) -> include ? Optional.of(formatted) : Optional.empty()));
+
+        static final State INSTANCE = new InPre();
+
+        @Override
+        public StepResult step(LineWriter writer, String input) throws IOException {
+            int closeIdx = input.indexOf("</pre>");
+            if (closeIdx < 0) {
+                Optional<String> formatted = formatLine(input);
+                if (formatted.isPresent()) {
+                    writer.writeLine(formatted.get());
+                }
+                return StepResult.of(this);
+            }
+
+            if (closeIdx > 0) {
+                Optional<String> formatted = formatLine(input.substring(0, closeIdx));
+                if (formatted.isPresent()) {
+                    writer.writeLine(formatted.get());
+                }
+            }
+            writer.writeLine(input.substring(closeIdx));
+            return StepResult.of(Default.INSTANCE);
+        }
+
+        private static Optional<String> formatLine(String line) {
+            return PARSER.tryParse(StringEscapeUtils.unescapeHtml4(line))
+                    .map(opt -> opt.map(StringEscapeUtils::escapeHtml4))
+                    .orElseGet(() -> Optional.of(line));
+        }
+    }
+
+    private record LineWriter(BufferedWriter writer) {
+        void writeLine(String line) throws IOException {
+            writer.write(line);
+            writer.newLine();
         }
     }
 
@@ -74,81 +147,6 @@ final class StreamState {
     }
 
     private sealed interface State {
-        StepResult step(StreamState ctx, String input) throws IOException;
-    }
-
-    private static final class Default implements State {
-        static final State INSTANCE = new Default();
-
-        private static final Pattern OUTPUT_HEADER_PATTERN =
-                Pattern.compile("<h2>standard (?:output|error)</h2>", Pattern.CASE_INSENSITIVE);
-
-        @Override
-        public StepResult step(StreamState ctx, String input) throws IOException {
-            ctx.passthrough(input);
-            if (OUTPUT_HEADER_PATTERN.matcher(input).find()) {
-                return StepResult.of(AwaitingPre.INSTANCE);
-            }
-            return StepResult.of(this);
-        }
-    }
-
-    private static final class AwaitingPre implements State {
-        static final State INSTANCE = new AwaitingPre();
-
-        private static final Pattern PRE_OPEN_PATTERN = Pattern.compile("<pre[^>]*>");
-
-        @Override
-        public StepResult step(StreamState ctx, String input) throws IOException {
-            Matcher matcher = PRE_OPEN_PATTERN.matcher(input);
-            if (!matcher.find()) {
-                ctx.passthrough(input);
-                return StepResult.of(this);
-            }
-
-            ctx.writer.write(input, 0, matcher.end());
-            ctx.writer.newLine();
-
-            return StepResult.of(input.substring(matcher.end()));
-        }
-    }
-
-    private static final class InPre implements State {
-        static final State INSTANCE = new InPre();
-
-        @Override
-        public StepResult step(StreamState ctx, String input) throws IOException {
-            int closeIdx = input.indexOf("</pre>");
-            if (closeIdx < 0) {
-                ctx.formatAndWrite(input);
-                return StepResult.of(this);
-            }
-
-            if (closeIdx > 0) {
-                ctx.formatAndWrite(input.substring(0, closeIdx));
-            }
-            ctx.writer.write(input, closeIdx, input.length() - closeIdx);
-            ctx.writer.newLine();
-            return StepResult.of(Default.INSTANCE);
-        }
-    }
-
-    private void passthrough(String line) throws IOException {
-        writer.write(line);
-        writer.newLine();
-    }
-
-    private void formatAndWrite(String rawLine) throws IOException {
-        Optional<String> formatted = formatLine(rawLine);
-        if (formatted.isPresent()) {
-            writer.write(formatted.get());
-            writer.newLine();
-        }
-    }
-
-    private static Optional<String> formatLine(String line) {
-        return PARSER.tryParse(StringEscapeUtils.unescapeHtml4(line))
-                .map(opt -> opt.map(StringEscapeUtils::escapeHtml4))
-                .orElseGet(() -> Optional.of(line));
+        StepResult step(LineWriter writer, String input) throws IOException;
     }
 }
