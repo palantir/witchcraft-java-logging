@@ -2,13 +2,13 @@
 
 com.fasterxml.jackson.core:jackson-annotations:2.21 (8 constraints: a68576b6)
 
-com.fasterxml.jackson.core:jackson-core:2.21.0 (9 constraints: 33c80b22)
+com.fasterxml.jackson.core:jackson-core:2.21.1 (9 constraints: 3ac8b02a)
 
-com.fasterxml.jackson.core:jackson-databind:2.21.0 (11 constraints: 0ff06874)
+com.fasterxml.jackson.core:jackson-databind:2.21.1 (11 constraints: 15f0ed7e)
 
-com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.21.0 (2 constraints: b1215f76)
+com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.21.1 (2 constraints: b221ae76)
 
-com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.0 (2 constraints: b1215f76)
+com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.1 (2 constraints: b221ae76)
 
 com.google.code.findbugs:jsr305:3.0.2 (2 constraints: e22b9bbf)
 
@@ -70,13 +70,13 @@ org.slf4j:slf4j-api:2.0.17 (6 constraints: 9b4d2988)
 
 cglib:cglib-nodep:3.2.2 (1 constraints: 490ded24)
 
-com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.21.0 (1 constraints: 7b1c97a4)
+com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.21.1 (1 constraints: 7b1c97a4)
 
-com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.21.0 (1 constraints: 7b1c97a4)
+com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.21.1 (1 constraints: 7b1c97a4)
 
-com.fasterxml.jackson.datatype:jackson-datatype-guava:2.21.0 (1 constraints: 7b1c97a4)
+com.fasterxml.jackson.datatype:jackson-datatype-guava:2.21.1 (1 constraints: 7b1c97a4)
 
-com.fasterxml.jackson.datatype:jackson-datatype-joda:2.21.0 (1 constraints: 7b1c97a4)
+com.fasterxml.jackson.datatype:jackson-datatype-joda:2.21.1 (1 constraints: 7b1c97a4)
 
 com.netflix.nebula:nebula-test:10.6.2 (2 constraints: d61de72d)
 
