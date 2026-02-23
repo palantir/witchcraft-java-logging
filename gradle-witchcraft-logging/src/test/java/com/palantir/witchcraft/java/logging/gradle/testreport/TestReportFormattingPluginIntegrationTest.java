@@ -43,8 +43,6 @@ class TestReportFormattingPluginIntegrationTest {
             @Test
             public void largeOutputTest() {
                 // Print enough JSON log lines to create a report that will OOM the post-processor
-                // Each line is ~250 chars; 500K lines = ~125MB of stdout
-                // With 3x memory factor in HtmlReportPostProcessor, needs ~375MB to process
                 for (int i = 0; i < 500_000; i++) {
                     System.out.println(SERVICE_JSON);
                 }
@@ -192,7 +190,7 @@ class TestReportFormattingPluginIntegrationTest {
             """);
 
         // Constrain Gradle daemon heap so in-memory processing will OOM
-        rootProject.gradlePropertiesFile().appendProperty("org.gradle.jvmargs", "-Xmx256m");
+        rootProject.gradlePropertiesFile().setProperty("org.gradle.jvmargs", "-Xmx256m");
 
         rootProject.testSourceSet().java().writeClass(LARGE_OUTPUT_TEST_CLASS);
 
