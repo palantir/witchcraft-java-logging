@@ -16,33 +16,23 @@
 
 package com.palantir.witchcraft.java.logging.gradle.testreport;
 
-import com.palantir.witchcraft.java.logging.format.LogFormatter;
-import com.palantir.witchcraft.java.logging.format.LogParser;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * Post-processes HTML test report files to apply witchcraft log formatting.
+ * Streams line-by-line to support arbitrarily large files in constant memory.
  */
 final class HtmlReportPostProcessor {
-
-    private static final LogParser<Optional<String>> PARSER = new LogParser<>(TestLogFilter.INSTANCE.combineWith(
-            LogFormatter.INSTANCE, (include, formatted) -> include ? Optional.of(formatted) : Optional.empty()));
-
-    // Match <pre> tags within stdout/stderr sections: <h2>standard output</h2>...<pre>...</pre>
-    private static final Pattern OUTPUT_SECTION_PATTERN = Pattern.compile(
-            "(<h2>standard (?:output|error)</h2>\\s*<span[^>]*>\\s*<pre[^>]*>)(.*?)(</pre>)",
-            Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     void processReportDirectory(File reportDir) {
         Optional.ofNullable(reportDir).filter(File::isDirectory).ifPresent(this::walkAndProcessHtmlFiles);
@@ -57,45 +47,14 @@ final class HtmlReportPostProcessor {
     }
 
     private void processHtmlFile(Path htmlFile) {
-        try {
-            String content = Files.readString(htmlFile, StandardCharsets.UTF_8);
-            String processed = processHtmlContent(content);
-
-            if (!content.equals(processed)) {
-                Files.writeString(htmlFile, processed, StandardCharsets.UTF_8);
-            }
+        Path tmp = htmlFile.resolveSibling(htmlFile.getFileName() + ".tmp");
+        try (BufferedReader reader = Files.newBufferedReader(htmlFile, StandardCharsets.UTF_8);
+                BufferedWriter writer = Files.newBufferedWriter(tmp, StandardCharsets.UTF_8)) {
+            StreamState state = new StreamState(writer);
+            reader.lines().forEach(state::processLine);
+            Files.move(tmp, htmlFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-    }
-
-    private String processHtmlContent(String html) {
-        Matcher matcher = OUTPUT_SECTION_PATTERN.matcher(html);
-        StringBuilder result = new StringBuilder();
-
-        while (matcher.find()) {
-            String replacement = matcher.group(1) + formatPreContent(matcher.group(2)) + matcher.group(3);
-            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
-        }
-        matcher.appendTail(result);
-
-        return result.toString();
-    }
-
-    private String formatPreContent(String content) {
-        return content.lines()
-                .map(this::formatLine)
-                .<String>mapMulti(Optional::ifPresent)
-                .collect(Collectors.joining("\n"));
-    }
-
-    /**
-     * @return formatted line (with trailing newline), empty if filtered out,
-     * or original if not a witchcraft log
-     */
-    private Optional<String> formatLine(String line) {
-        return PARSER.tryParse(StringEscapeUtils.unescapeHtml4(line))
-                .map(opt -> opt.map(formatted -> StringEscapeUtils.escapeHtml4(formatted) + "\n"))
-                .orElseGet(() -> Optional.of(line));
     }
 }

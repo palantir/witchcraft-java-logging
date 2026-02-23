@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2021 Palantir Technologies Inc. All rights reserved.
+ * (c) Copyright 2026 Palantir Technologies Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,33 @@ import com.palantir.gradle.testing.junit.InjectByGradleVersion;
 import com.palantir.gradle.testing.junit.ParameterizedByGradleVersion;
 import com.palantir.gradle.testing.junit.ParameterizedByGradleVersion.WhenVersion;
 import com.palantir.gradle.testing.project.RootProject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @GradlePluginTests
 class TestReportFormattingPluginIntegrationTest {
+
+    private static final String LARGE_OUTPUT_TEST_CLASS = """
+        package com.palantir;
+        import org.junit.Test;
+
+        public final class LargeOutputTest {
+            private static final String SERVICE_JSON = "{\\"type\\":\\"service.1\\",\\"level\\":\\"ERROR\\","
+                + "\\"time\\":\\"2019-05-09T15:32:37.692Z\\",\\"origin\\":\\"ROOT\\","
+                + "\\"thread\\":\\"main\\",\\"message\\":\\"test good {}\\","
+                + "\\"params\\":{\\"good\\":\\":-)\\"},\\"unsafeParams\\":{},\\"tags\\":{}}";
+
+            @Test
+            public void largeOutputTest() {
+                // Print enough JSON log lines to create a report that will OOM the post-processor
+                for (int i = 0; i < 500_000; i++) {
+                    System.out.println(SERVICE_JSON);
+                }
+                throw new AssertionError("done");
+            }
+        }
+        """;
+
     private static final String SIMPLE_TEST_CLASS = """
         package com.palantir;
         import org.junit.Test;
@@ -66,15 +89,8 @@ class TestReportFormattingPluginIntegrationTest {
         }
         """;
 
-    @Test
-    @ParameterizedByGradleVersion(
-            when =
-                    @WhenVersion(
-                            lessThan = "9.3.0",
-                            stringValue = "reports/tests/test/classes/com.palantir.SimpleTest.html"),
-            otherwiseString = "reports/tests/test/com.palantir.SimpleTest/simpleTest.html")
-    void formats_test_report_stdout_and_stderr(
-            GradleInvoker gradle, RootProject rootProject, @InjectByGradleVersion String reportPath) {
+    @BeforeEach
+    public void beforeEach(RootProject rootProject) {
         rootProject
                 .buildGradle()
                 .plugins()
@@ -102,7 +118,17 @@ class TestReportFormattingPluginIntegrationTest {
                 sourceCompatibility = 11
             }
             """);
+    }
 
+    @Test
+    @ParameterizedByGradleVersion(
+            when =
+                    @WhenVersion(
+                            lessThan = "9.3.0",
+                            stringValue = "reports/tests/test/classes/com.palantir.SimpleTest.html"),
+            otherwiseString = "reports/tests/test/com.palantir.SimpleTest/simpleTest.html")
+    void formats_test_report_stdout_and_stderr(
+            GradleInvoker gradle, RootProject rootProject, @InjectByGradleVersion String reportPath) {
         rootProject.testSourceSet().java().writeClass(SIMPLE_TEST_CLASS);
 
         gradle.withArgs("compileTestJava").buildsSuccessfully();
@@ -126,5 +152,33 @@ class TestReportFormattingPluginIntegrationTest {
                 .as("metric logging should be filtered out entirely")
                 .doesNotContain("Scavenge")
                 .contains("==Done==");
+    }
+
+    @Test
+    @ParameterizedByGradleVersion(
+            when =
+                    @WhenVersion(
+                            lessThan = "9.3.0",
+                            stringValue = "reports/tests/test/classes/com.palantir.LargeOutputTest.html"),
+            otherwiseString = "reports/tests/test/com.palantir.LargeOutputTest/largeOutputTest.html")
+    void handles_large_report_without_oom(
+            GradleInvoker gradle, RootProject rootProject, @InjectByGradleVersion String reportPath) {
+        // Constrain Gradle daemon heap so in-memory processing will OOM
+        rootProject.gradlePropertiesFile().setProperty("org.gradle.jvmargs", "-Xmx256m");
+
+        rootProject.testSourceSet().java().writeClass(LARGE_OUTPUT_TEST_CLASS);
+
+        gradle.withArgs("compileTestJava").buildsSuccessfully();
+
+        gradle.withArgs("test").buildsWithFailure();
+
+        rootProject
+                .buildDir()
+                .file(reportPath)
+                .assertThat()
+                .content()
+                .contains("ERROR [2019-05-09T15:32:37.692Z]")
+                .doesNotContain("service.1")
+                .contains("done");
     }
 }
