@@ -10,7 +10,7 @@ org.junit.vintage:* = 6.0.3
 org.mockito:* = 5.21.0
 org.slf4j:* = 2.0.17
 com.netflix.nebula:nebula-test = 11.11.3
-com.palantir.gradle.idea-configuration:gradle-idea-configuration = 0.3.0
+com.palantir.gradle.idea-configuration:gradle-idea-configuration = 0.8.0
 org.apache.commons:commons-text = 1.15.0
 
 # test
