@@ -40,9 +40,12 @@ public abstract class TestReportFormattingPlugin implements Plugin<Project> {
     @Override
     public final void apply(Project project) {
         project.getTasks().withType(AbstractTestTask.class).configureEach(task -> {
-            getFlowScope().always(FormatReportAction.class, spec -> spec.getParameters()
-                    .getReportDir()
-                    .set(task.getReports().getHtml()));
+            getFlowScope()
+                    .always(
+                            FormatReportAction.class,
+                            spec -> spec.getParameters()
+                                    .getReportDir()
+                                    .set(task.getReports().getHtml()));
         });
     }
 

@@ -113,9 +113,10 @@ public final class LogParser<T> {
                 return applyToLogLine(logLine, DiagnosticLogV1.class, logVisitor::diagnosticV1);
             }
             case WRAPPED_V1 -> {
-                return applyToLogLine(logLine, WrappedLogV1.class, wrappedLogV1 -> wrappedLogV1
-                        .getPayload()
-                        .accept(wrappedLogDelegatingVisitor));
+                return applyToLogLine(
+                        logLine,
+                        WrappedLogV1.class,
+                        wrappedLogV1 -> wrappedLogV1.getPayload().accept(wrappedLogDelegatingVisitor));
             }
         }
 
