@@ -229,8 +229,9 @@ public final class WitchcraftLogFormatFilterTest {
 
     @Test
     public void testMultilineFiltering() {
-        InputFilter inputFilter =
-                new WitchcraftLogFilter(WitchcraftLogFormatter.INSTANCE, () -> WitchcraftLogSettings.builder()
+        InputFilter inputFilter = new WitchcraftLogFilter(
+                WitchcraftLogFormatter.INSTANCE,
+                () -> WitchcraftLogSettings.builder()
                         .showEventLogs(true)
                         .showMetricLogs(false)
                         .showRequestLogs(true)
@@ -246,8 +247,9 @@ public final class WitchcraftLogFormatFilterTest {
 
     @Test
     public void testMultipleLinesFiltering() {
-        InputFilter inputFilter =
-                new WitchcraftLogFilter(WitchcraftLogFormatter.INSTANCE, () -> WitchcraftLogSettings.builder()
+        InputFilter inputFilter = new WitchcraftLogFilter(
+                WitchcraftLogFormatter.INSTANCE,
+                () -> WitchcraftLogSettings.builder()
                         .showEventLogs(true)
                         .showMetricLogs(false)
                         .showRequestLogs(true)
