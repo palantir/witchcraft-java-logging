@@ -1,14 +1,20 @@
 # Run ./gradlew writeVersionsLocks to regenerate this file. Blank lines are to minimize merge conflicts.
 
-com.fasterxml.jackson.core:jackson-annotations:2.21 (8 constraints: a68576b6)
+com.fasterxml.jackson.core:jackson-annotations:2.21 (9 constraints: b09c0f56)
 
-com.fasterxml.jackson.core:jackson-core:2.21.1 (9 constraints: 3ac8b02a)
+com.fasterxml.jackson.core:jackson-core:2.21.1 (10 constraints: a3df3aad)
 
-com.fasterxml.jackson.core:jackson-databind:2.21.1 (11 constraints: 15f0ed7e)
+com.fasterxml.jackson.core:jackson-databind:2.21.1 (12 constraints: 8d070465)
 
-com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.21.1 (2 constraints: b221ae76)
+com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.21.1 (1 constraints: a51a8b21)
+
+com.fasterxml.jackson.datatype:jackson-datatype-guava:2.21.1 (2 constraints: 1f37ed01)
+
+com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.21.1 (3 constraints: 563cf955)
 
 com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.1 (2 constraints: b221ae76)
+
+com.fasterxml.woodstox:woodstox-core:7.1.1 (1 constraints: 3d174926)
 
 com.google.code.findbugs:jsr305:3.0.2 (2 constraints: e22b9bbf)
 
@@ -16,7 +22,7 @@ com.google.errorprone:error_prone_annotations:2.41.0 (9 constraints: ca959ab9)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
-com.google.guava:guava:33.5.0-jre (8 constraints: 05aeb6aa)
+com.google.guava:guava:33.5.0-jre (7 constraints: e5918e78)
 
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 constraints: bd17c918)
 
@@ -26,7 +32,7 @@ com.palantir.conjure.java:conjure-lib:8.69.0 (2 constraints: e93409c0)
 
 com.palantir.conjure.java.api:errors:2.68.0 (1 constraints: 2810b6a9)
 
-com.palantir.gradle.idea-configuration:gradle-idea-configuration:0.3.0 (1 constraints: 0505f435)
+com.palantir.gradle.idea-configuration:gradle-idea-configuration:0.8.0 (1 constraints: 0a050336)
 
 com.palantir.ri:resource-identifier:2.12.0 (1 constraints: 1d1090a9)
 
@@ -49,6 +55,8 @@ com.palantir.witchcraft.api:witchcraft-logging-api-objects:2.6.0 (1 constraints:
 org.apache.commons:commons-lang3:3.20.0 (1 constraints: f70d9342)
 
 org.apache.commons:commons-text:1.15.0 (1 constraints: 3905383b)
+
+org.codehaus.woodstox:stax2-api:4.2.2 (2 constraints: 6a278bd2)
 
 org.eclipse.collections:eclipse-collections:13.0.0 (1 constraints: 1c1091a9)
 
@@ -73,8 +81,6 @@ cglib:cglib-nodep:3.2.2 (1 constraints: 490ded24)
 com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.21.1 (1 constraints: 7b1c97a4)
 
 com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.21.1 (1 constraints: 7b1c97a4)
-
-com.fasterxml.jackson.datatype:jackson-datatype-guava:2.21.1 (1 constraints: 7b1c97a4)
 
 com.fasterxml.jackson.datatype:jackson-datatype-joda:2.21.1 (1 constraints: 7b1c97a4)
 
