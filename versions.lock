@@ -2,9 +2,9 @@
 
 com.fasterxml.jackson.core:jackson-annotations:2.21 (9 constraints: b39c8b56)
 
-com.fasterxml.jackson.core:jackson-core:2.21.1 (10 constraints: a4df3dad)
+com.fasterxml.jackson.core:jackson-core:2.21.1 (10 constraints: a5df8cad)
 
-com.fasterxml.jackson.core:jackson-databind:2.21.1 (12 constraints: 8f07ac65)
+com.fasterxml.jackson.core:jackson-databind:2.21.1 (12 constraints: 92076767)
 
 com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.21.1 (1 constraints: a51a8b21)
 
@@ -18,7 +18,7 @@ com.fasterxml.woodstox:woodstox-core:7.1.1 (1 constraints: 3d174926)
 
 com.google.code.findbugs:jsr305:3.0.2 (2 constraints: e22b9bbf)
 
-com.google.errorprone:error_prone_annotations:2.43.0 (9 constraints: cc95c2bb)
+com.google.errorprone:error_prone_annotations:2.43.0 (9 constraints: d0958cbe)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
@@ -28,27 +28,27 @@ com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 c
 
 com.google.j2objc:j2objc-annotations:3.1 (1 constraints: b809f1a0)
 
-com.palantir.conjure.java:conjure-lib:8.70.0 (2 constraints: e134d2bd)
+com.palantir.conjure.java:conjure-lib:8.75.0 (2 constraints: e63435bf)
 
-com.palantir.conjure.java.api:errors:2.69.0 (1 constraints: 2910b9a9)
+com.palantir.conjure.java.api:errors:2.70.0 (1 constraints: 2110a2a9)
 
 com.palantir.gradle.idea-configuration:gradle-idea-configuration:0.8.0 (1 constraints: 0a050336)
 
-com.palantir.ri:resource-identifier:2.13.0 (1 constraints: 1e1093a9)
+com.palantir.ri:resource-identifier:2.14.0 (1 constraints: 1f1096a9)
 
-com.palantir.safe-logging:logger:3.12.0 (3 constraints: 043902cd)
+com.palantir.safe-logging:logger:3.13.0 (3 constraints: 073988cd)
 
-com.palantir.safe-logging:logger-slf4j:3.12.0 (1 constraints: 310e8d50)
+com.palantir.safe-logging:logger-slf4j:3.13.0 (1 constraints: 320e9050)
 
-com.palantir.safe-logging:logger-spi:3.12.0 (2 constraints: 711e40b0)
+com.palantir.safe-logging:logger-spi:3.13.0 (2 constraints: 731e76b0)
 
-com.palantir.safe-logging:preconditions:3.12.0 (7 constraints: 35797417)
+com.palantir.safe-logging:preconditions:3.13.0 (7 constraints: 3d79981c)
 
-com.palantir.safe-logging:safe-logging:3.12.0 (9 constraints: e2a32490)
+com.palantir.safe-logging:safe-logging:3.13.0 (9 constraints: eba34999)
 
-com.palantir.tokens:auth-tokens:3.22.0 (1 constraints: 1f109aa9)
+com.palantir.tokens:auth-tokens:4.2.0 (1 constraints: ee0f7a99)
 
-com.palantir.tritium:tritium-ids:0.124.0 (1 constraints: fa0f8ea6)
+com.palantir.tritium:tritium-ids:0.125.0 (1 constraints: fb0f91a6)
 
 com.palantir.witchcraft.api:witchcraft-logging-api-objects:2.6.0 (1 constraints: 0a050736)
 
@@ -66,9 +66,9 @@ org.immutables:value:2.12.1 (1 constraints: c90f9796)
 
 org.immutables:value-annotations:2.12.1 (1 constraints: 3805363b)
 
-org.jetbrains:annotations:26.1.0 (4 constraints: 31533bc9)
+org.jetbrains:annotations:26.1.0 (4 constraints: 305380c8)
 
-org.jspecify:jspecify:1.0.0 (11 constraints: f0ad1b9c)
+org.jspecify:jspecify:1.0.0 (12 constraints: bfbb896d)
 
 org.slf4j:slf4j-api:2.0.17 (6 constraints: 9b4d2988)
 
@@ -86,9 +86,9 @@ com.fasterxml.jackson.datatype:jackson-datatype-joda:2.21.1 (1 constraints: 7c1c
 
 com.netflix.nebula:nebula-test:11.11.3 (2 constraints: 041e803f)
 
-com.palantir.conjure.java.runtime:conjure-java-jackson-optimizations:8.32.0 (1 constraints: 831cc2a4)
+com.palantir.conjure.java.runtime:conjure-java-jackson-optimizations:8.33.0 (1 constraints: 841cc5a4)
 
-com.palantir.conjure.java.runtime:conjure-java-jackson-serialization:8.32.0 (1 constraints: 3f05613b)
+com.palantir.conjure.java.runtime:conjure-java-jackson-serialization:8.33.0 (1 constraints: 4005643b)
 
 com.palantir.gradle.plugintesting:configuration-cache-spec:0.66.0 (1 constraints: 3e05493b)
 
@@ -98,7 +98,7 @@ com.palantir.gradle.plugintesting:gradle-plugin-testing-junit:0.66.0 (1 constrai
 
 com.palantir.gradle.plugintesting:plugin-testing-core:0.66.0 (1 constraints: 3e05493b)
 
-com.palantir.tritium:tritium-registry:0.125.0 (1 constraints: ae1c44c1)
+com.palantir.tritium:tritium-registry:0.126.0 (1 constraints: af1c47c1)
 
 commons-io:commons-io:2.19.0 (1 constraints: db190cdf)
 
