@@ -18,11 +18,11 @@ com.fasterxml.woodstox:woodstox-core:7.1.1 (1 constraints: 3d174926)
 
 com.google.code.findbugs:jsr305:3.0.2 (2 constraints: e22b9bbf)
 
-com.google.errorprone:error_prone_annotations:2.43.0 (9 constraints: d0958cbe)
+com.google.errorprone:error_prone_annotations:2.47.0 (9 constraints: d695f2c7)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
-com.google.guava:guava:33.5.0-jre (7 constraints: e5918e78)
+com.google.guava:guava:33.6.0-jre (7 constraints: e691177a)
 
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 constraints: bd17c918)
 
