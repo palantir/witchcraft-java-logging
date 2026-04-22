@@ -28,7 +28,7 @@ com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 c
 
 com.google.j2objc:j2objc-annotations:3.1 (1 constraints: b809f1a0)
 
-com.palantir.conjure.java:conjure-lib:8.75.0 (2 constraints: e63435bf)
+com.palantir.conjure.java:conjure-lib:8.75.0 (2 constraints: ed344cbf)
 
 com.palantir.conjure.java.api:errors:2.70.0 (1 constraints: 2110a2a9)
 
@@ -44,13 +44,13 @@ com.palantir.safe-logging:logger-spi:3.13.0 (2 constraints: 731e76b0)
 
 com.palantir.safe-logging:preconditions:3.13.0 (7 constraints: 3d79981c)
 
-com.palantir.safe-logging:safe-logging:3.13.0 (9 constraints: eba34999)
+com.palantir.safe-logging:safe-logging:3.13.0 (9 constraints: 16a45e3d)
 
 com.palantir.tokens:auth-tokens:4.2.0 (1 constraints: ee0f7a99)
 
 com.palantir.tritium:tritium-ids:0.125.0 (1 constraints: fb0f91a6)
 
-com.palantir.witchcraft.api:witchcraft-logging-api-objects:2.6.0 (1 constraints: 0a050736)
+com.palantir.witchcraft.api:witchcraft-logging-api-objects:2.10.0 (1 constraints: 35052f3b)
 
 org.apache.commons:commons-lang3:3.20.0 (1 constraints: f70d9342)
 
@@ -66,7 +66,7 @@ org.immutables:value:2.12.1 (1 constraints: c90f9796)
 
 org.immutables:value-annotations:2.12.1 (1 constraints: 3805363b)
 
-org.jetbrains:annotations:26.1.0 (4 constraints: 305380c8)
+org.jetbrains:annotations:26.1.0 (4 constraints: 2f5381c8)
 
 org.jspecify:jspecify:1.0.0 (12 constraints: bfbb896d)
 
