@@ -62,9 +62,9 @@ org.eclipse.collections:eclipse-collections:13.0.0 (1 constraints: 1c1091a9)
 
 org.eclipse.collections:eclipse-collections-api:13.0.0 (2 constraints: fa22df26)
 
-org.immutables:value:2.12.1 (1 constraints: c90f9796)
+org.immutables:value:2.12.2 (1 constraints: c90f9796)
 
-org.immutables:value-annotations:2.12.1 (1 constraints: 3805363b)
+org.immutables:value-annotations:2.12.2 (1 constraints: 3905373b)
 
 org.jetbrains:annotations:26.1.0 (4 constraints: 2f5381c8)
 
