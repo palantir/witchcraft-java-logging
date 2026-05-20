@@ -18,37 +18,37 @@ com.fasterxml.woodstox:woodstox-core:7.1.1 (1 constraints: 3d174926)
 
 com.google.code.findbugs:jsr305:3.0.2 (2 constraints: e22b9bbf)
 
-com.google.errorprone:error_prone_annotations:2.47.0 (9 constraints: de95cad1)
+com.google.errorprone:error_prone_annotations:2.49.0 (9 constraints: e895c8d6)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
-com.google.guava:guava:33.6.0-jre (7 constraints: e7910d7b)
+com.google.guava:guava:33.6.0-jre (7 constraints: e9914e7b)
 
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 constraints: bd17c918)
 
 com.google.j2objc:j2objc-annotations:3.1 (1 constraints: b809f1a0)
 
-com.palantir.conjure.java:conjure-lib:8.77.0 (2 constraints: f134e0bf)
+com.palantir.conjure.java:conjure-lib:8.78.0 (2 constraints: f23427c0)
 
-com.palantir.conjure.java.api:errors:2.71.0 (1 constraints: 2210a5a9)
+com.palantir.conjure.java.api:errors:2.72.0 (1 constraints: 2310a8a9)
 
 com.palantir.gradle.idea-configuration:gradle-idea-configuration:0.8.0 (1 constraints: 0a050336)
 
-com.palantir.ri:resource-identifier:2.15.0 (1 constraints: 201099a9)
+com.palantir.ri:resource-identifier:2.17.0 (1 constraints: 22109fa9)
 
-com.palantir.safe-logging:logger:3.14.0 (3 constraints: 0a390ece)
+com.palantir.safe-logging:logger:3.15.0 (3 constraints: 0d3994ce)
 
-com.palantir.safe-logging:logger-slf4j:3.14.0 (1 constraints: 330e9350)
+com.palantir.safe-logging:logger-slf4j:3.15.0 (1 constraints: 340e9650)
 
-com.palantir.safe-logging:logger-spi:3.14.0 (2 constraints: 751eacb0)
+com.palantir.safe-logging:logger-spi:3.15.0 (2 constraints: 771ee2b0)
 
-com.palantir.safe-logging:preconditions:3.14.0 (7 constraints: 43798b20)
+com.palantir.safe-logging:preconditions:3.15.0 (7 constraints: 4b798424)
 
-com.palantir.safe-logging:safe-logging:3.14.0 (9 constraints: 1ea4a044)
+com.palantir.safe-logging:safe-logging:3.15.0 (9 constraints: 27a46d4c)
 
-com.palantir.tokens:auth-tokens:4.3.0 (1 constraints: ef0f7d99)
+com.palantir.tokens:auth-tokens:4.4.0 (1 constraints: f00f8099)
 
-com.palantir.tritium:tritium-ids:0.126.0 (1 constraints: fc0f94a6)
+com.palantir.tritium:tritium-ids:0.127.0 (1 constraints: fd0f97a6)
 
 com.palantir.witchcraft.api:witchcraft-logging-api-objects:2.11.0 (1 constraints: 3605323b)
 
@@ -86,9 +86,9 @@ com.fasterxml.jackson.datatype:jackson-datatype-joda:2.21.1 (1 constraints: 7c1c
 
 com.netflix.nebula:nebula-test:11.11.3 (2 constraints: 041e803f)
 
-com.palantir.conjure.java.runtime:conjure-java-jackson-optimizations:8.34.0 (1 constraints: 851cc8a4)
+com.palantir.conjure.java.runtime:conjure-java-jackson-optimizations:8.35.0 (1 constraints: 861ccba4)
 
-com.palantir.conjure.java.runtime:conjure-java-jackson-serialization:8.34.0 (1 constraints: 4105673b)
+com.palantir.conjure.java.runtime:conjure-java-jackson-serialization:8.35.0 (1 constraints: 42056a3b)
 
 com.palantir.gradle.plugintesting:configuration-cache-spec:0.72.0 (1 constraints: 3b05413b)
 
@@ -98,7 +98,7 @@ com.palantir.gradle.plugintesting:gradle-plugin-testing-junit:0.72.0 (1 constrai
 
 com.palantir.gradle.plugintesting:plugin-testing-core:0.72.0 (2 constraints: 121f788d)
 
-com.palantir.tritium:tritium-registry:0.126.0 (1 constraints: af1c47c1)
+com.palantir.tritium:tritium-registry:0.130.0 (1 constraints: aa1c39c1)
 
 commons-io:commons-io:2.22.0 (1 constraints: d519fbde)
 
