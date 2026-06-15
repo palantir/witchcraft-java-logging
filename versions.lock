@@ -10,9 +10,9 @@ com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.21.4 (1 constraints: a
 
 com.fasterxml.jackson.datatype:jackson-datatype-guava:2.21.4 (2 constraints: 23371903)
 
-com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.21.4 (3 constraints: 5a3c2557)
+com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.21.4 (3 constraints: 5d3cf058)
 
-com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.4 (2 constraints: b621b276)
+com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.4 (2 constraints: b9219f77)
 
 com.fasterxml.woodstox:woodstox-core:7.1.1 (1 constraints: 3d174926)
 
