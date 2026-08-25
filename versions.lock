@@ -84,7 +84,7 @@ com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.22.1 (1 constraints:
 
 com.fasterxml.jackson.datatype:jackson-datatype-joda:2.22.1 (1 constraints: 7d1c9ba4)
 
-com.netflix.nebula:nebula-test:11.11.3 (2 constraints: 041e803f)
+com.netflix.nebula:nebula-test:12.1.0 (2 constraints: d11d8c2c)
 
 com.palantir.conjure.java.runtime:conjure-java-jackson-optimizations:8.41.0 (1 constraints: 831cc3a4)
 
@@ -116,7 +116,7 @@ net.bytebuddy:byte-buddy-agent:1.17.7 (1 constraints: 4a0b4ede)
 
 org.apiguardian:apiguardian-api:1.1.2 (7 constraints: cc761de9)
 
-org.assertj:assertj-core:3.27.7 (3 constraints: a22c4954)
+org.assertj:assertj-core:3.27.7 (3 constraints: a62c6955)
 
 org.codehaus.groovy:groovy:3.0.24 (2 constraints: fd25697b)
 
@@ -136,7 +136,7 @@ org.junit.platform:junit-platform-commons:6.1.3 (2 constraints: db20e44a)
 
 org.junit.platform:junit-platform-engine:6.1.3 (4 constraints: a740dfe5)
 
-org.junit.platform:junit-platform-launcher:6.1.3 (3 constraints: d22847a2)
+org.junit.platform:junit-platform-launcher:6.1.3 (3 constraints: d428c5a2)
 
 org.junit.vintage:junit-vintage-engine:6.1.3 (1 constraints: 0c050f36)
 
