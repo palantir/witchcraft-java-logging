@@ -21,25 +21,36 @@ dependencies {
 }
 
 def minimumIntellijBuild = '232.10203.10' // 2023.2.4
-intellij {
-    pluginName = 'witchcraft-logging-idea'
-    version = minimumIntellijBuild
-    updateSinceUntilBuild = false
+
+repositories {
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
-patchPluginXml {
-    sinceBuild = minimumIntellijBuild
+intellijPlatform {
+    pluginConfiguration {
+        name = 'witchcraft-logging-idea'
+        ideaVersion {
+            sinceBuild = minimumIntellijBuild
+        }
+    }
+
+    pluginVerification {
+        ides {
+            ide('IC', '2024.1')
+            ide('IU', '2024.2.1')
+            ide('GO', '2024.2')
+        }
+    }
 }
 
-runPluginVerifier {
-    ideVersions = [
-            // Idea Community
-            "IC-2024.1",
-            // Idea Ultimate
-            "IU-2024.2.1",
-            // Goland
-            "GO-2024.2"
-            ]
+dependencies {
+    intellijPlatform {
+        intellijIdeaCommunity(minimumIntellijBuild) {
+            useInstaller = false
+        }
+    }
 }
 
-check.dependsOn runPluginVerifier
+check.dependsOn verifyPlugin
