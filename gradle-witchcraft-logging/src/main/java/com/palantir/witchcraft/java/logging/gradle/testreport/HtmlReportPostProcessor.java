@@ -48,10 +48,12 @@ final class HtmlReportPostProcessor {
 
     private void processHtmlFile(Path htmlFile) {
         Path tmp = htmlFile.resolveSibling(htmlFile.getFileName() + ".tmp");
-        try (BufferedReader reader = Files.newBufferedReader(htmlFile, StandardCharsets.UTF_8);
-                BufferedWriter writer = Files.newBufferedWriter(tmp, StandardCharsets.UTF_8)) {
-            StreamState state = new StreamState(writer);
-            reader.lines().forEach(state::processLine);
+        try {
+            try (BufferedReader reader = Files.newBufferedReader(htmlFile, StandardCharsets.UTF_8);
+                    BufferedWriter writer = Files.newBufferedWriter(tmp, StandardCharsets.UTF_8)) {
+                StreamState state = new StreamState(writer);
+                reader.lines().forEach(state::processLine);
+            }
             Files.move(tmp, htmlFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
