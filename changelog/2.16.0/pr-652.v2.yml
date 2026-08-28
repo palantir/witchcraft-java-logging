@@ -1,6 +1,0 @@
-type: improvement
-improvement:
-  description: Allow `com.palantir.witchcraft.api.logging.idea`  idea plugin dependency
-    configuration via `idea-configuration plugin`
-  links:
-  - https://github.com/palantir/witchcraft-java-logging/pull/652
