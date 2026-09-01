@@ -1,6 +1,20 @@
 apply plugin: 'com.palantir.external-publish-intellij'
 
+def minimumIntellijBuild = '232.10203.10'
+
+repositories {
+    intellijPlatform {
+        defaultRepositories()
+    }
+}
+
 dependencies {
+    intellijPlatform {
+        intellijIdeaCommunity(minimumIntellijBuild) {
+            useInstaller = false
+        }
+    }
+
     implementation project(':witchcraft-logging-formatting'), {
         exclude group: 'org.slf4j'
         because 'Must use intellij slf4j to produce logging'
@@ -20,26 +34,19 @@ dependencies {
     testImplementation 'org.mockito:mockito-core'
 }
 
-def minimumIntellijBuild = '232.10203.10' // 2023.2.4
-intellij {
-    pluginName = 'witchcraft-logging-idea'
-    version = minimumIntellijBuild
-    updateSinceUntilBuild = false
+intellijPlatform {
+    projectName = 'witchcraft-logging-idea'
+    pluginConfiguration {
+        ideaVersion {
+            sinceBuild = minimumIntellijBuild
+            untilBuild = provider { null }
+        }
+    }
+    pluginVerification {
+        ides {
+            create('IC', '2024.1')
+            create('IU', '2024.2.1')
+            create('GO', '2024.2')
+        }
+    }
 }
-
-patchPluginXml {
-    sinceBuild = minimumIntellijBuild
-}
-
-runPluginVerifier {
-    ideVersions = [
-            // Idea Community
-            "IC-2024.1",
-            // Idea Ultimate
-            "IU-2024.2.1",
-            // Goland
-            "GO-2024.2"
-            ]
-}
-
-check.dependsOn runPluginVerifier
