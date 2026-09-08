@@ -38,7 +38,7 @@ intellijPlatform {
     projectName = 'witchcraft-logging-idea'
     pluginConfiguration {
         ideaVersion {
-            sinceBuild = minimumIntellijBuild
+            // sinceBuild derives from the intellijIdeaCommunity() version
             untilBuild = provider { null }
         }
     }
@@ -47,6 +47,8 @@ intellijPlatform {
             create('IC', '2024.1')
             create('IU', '2024.2.1')
             create('GO', '2024.2')
+            create('IU', '2025.3.6.1')
+            create('IU', '2026.2.2')
         }
     }
 }
