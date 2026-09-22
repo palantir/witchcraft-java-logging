@@ -3,6 +3,7 @@ apply plugin: 'com.palantir.external-publish-intellij'
 def minimumIntellijBuild = '232.10203.10'
 
 repositories {
+    mavenCentral() { metadataSources { mavenPom(); ignoreGradleMetadataRedirection() } }
     intellijPlatform {
         defaultRepositories()
     }
