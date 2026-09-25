@@ -126,6 +126,12 @@ class LogParserTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {" ", "\t", "\n", "\r", "\r\n", " \t\r\n"})
+    void parse_service_logs_with_trailing_whitespace(String whitespace) {
+        assertThat(logParser.tryParse(SERVICE_JSON + whitespace)).hasValue("serviceV1");
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"-Infinity", "Infinity", "NaN"})
     void parse_service_logs_with_unquoted_non_finite_double(String value) {
         String json = SERVICE_JSON.replace("\"unsafeParams\":{}", "\"unsafeParams\":{\"value\":" + value + "}");
@@ -180,5 +186,11 @@ class LogParserTest {
     @Test
     void not_parse_partial_witchcraft_logs_with_extra_data() {
         assertThat(logParser.tryParse("some other stuff " + SERVICE_JSON)).isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {" trailing text", "\ttrailing text", "\ntrailing text"})
+    void not_parse_witchcraft_logs_with_trailing_non_whitespace(String suffix) {
+        assertThat(logParser.tryParse(SERVICE_JSON + suffix)).isEmpty();
     }
 }
