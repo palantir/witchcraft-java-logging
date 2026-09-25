@@ -18,9 +18,14 @@ package com.palantir.witchcraft.java.logging.format;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+import com.palantir.witchcraft.api.logging.ServiceLogV1;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 
 class LogParserTest {
     private static final String EVENT_JSON = "{\"type\":\"event.2\",\"time\":\"2019-05-24T16:40:21.049Z\","
@@ -118,6 +123,18 @@ class LogParserTest {
     @Test
     void parse_service_logs() {
         assertThat(logParser.tryParse(SERVICE_JSON)).hasValue("serviceV1");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"-Infinity", "Infinity", "NaN"})
+    void parse_service_logs_with_unquoted_non_finite_double(String value) {
+        String json = SERVICE_JSON.replace("\"unsafeParams\":{}", "\"unsafeParams\":{\"value\":" + value + "}");
+
+        assertThat(logParser.tryParse(json)).hasValue("serviceV1");
+
+        ArgumentCaptor<ServiceLogV1> captor = ArgumentCaptor.forClass(ServiceLogV1.class);
+        verify(logVisitor).serviceV1(captor.capture());
+        assertThat(captor.getValue().getUnsafeParams()).containsEntry("value", Double.valueOf(value));
     }
 
     @Test
